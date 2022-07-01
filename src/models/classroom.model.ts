@@ -1,3 +1,3 @@
-export interface Classroom {
-  name: string;
+export default interface Classroom {
+  classroom: string;
 }
