@@ -12,4 +12,16 @@ export default class ClassroomsService extends HttpService {
   list(): Promise<AxiosResponse<Array<Classroom>>> {
     return this.http.get('');
   }
+
+  create(data: any): Promise<AxiosResponse<any>> {
+    return this.http.post('', data);
+  }
+
+  delete(name: string): Promise<AxiosResponse<any>> {
+    return this.http.delete(name);
+  }
+
+  update(name: string, data: any): Promise<AxiosResponse<any>> {
+    return this.http.put(name, data);
+  }
 }

@@ -31,7 +31,7 @@ const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
     rounded={'md'}
     _hover={{
       textDecoration: 'none',
-      bg: useColorModeValue('gray.200', 'gray.700'),
+      bg: useColorModeValue('blue.300', 'blue.700'),
     }}
     href={to}
   >
@@ -44,7 +44,7 @@ export default function Navbar() {
 
   return (
     <>
-      <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
+      <Box bg={useColorModeValue('blue.200', 'blue.800')} px={4}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <IconButton
             size={'md'}
@@ -67,7 +67,7 @@ export default function Navbar() {
           </HStack>
           <Flex alignItems={'center'}>
             <Menu>
-              <MenuButton as={Button} rounded={'full'} variant={'link'} cursor={'pointer'} minW={0}>
+              <MenuButton as={Button} rounded={'full'} variant={'link'} cursor={'pointer'} minW={0} colorScheme='dark'>
                 <Flex alignItems={'center'} gap='1'>
                   <Text>Usuário</Text>
                   <Icon as={FaUser} />
