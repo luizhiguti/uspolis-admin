@@ -45,6 +45,7 @@ export default function RegisterModal(props: RegisterModalProps) {
   }, [props.formData]);
 
   function handleSaveClick() {
+    if (isEmpty(form.classroom_name)) return;
     if (props.isUpdate) {
       classroomService.update(form.classroom_name, form).then((it) => {
         setForm(initialForm);
@@ -63,7 +64,7 @@ export default function RegisterModal(props: RegisterModalProps) {
     props.onClose();
   }
 
-  function isRequired(value: string) {
+  function isEmpty(value: string) {
     return value.length <= 0;
   }
 
@@ -74,12 +75,12 @@ export default function RegisterModal(props: RegisterModalProps) {
         <ModalHeader>Cadastrar uma sala</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
-          <FormControl>
+          <FormControl isInvalid={isEmpty(form.classroom_name)}>
             <FormLabel>Nome</FormLabel>
             <Input
+              disabled={props.isUpdate}
               placeholder='Nome'
               value={form.classroom_name}
-              isInvalid={isRequired(form.classroom_name)}
               onChange={(event) => setForm((prev) => ({ ...prev, classroom_name: event.target.value }))}
             />
           </FormControl>
@@ -87,6 +88,7 @@ export default function RegisterModal(props: RegisterModalProps) {
           <FormControl mt={4}>
             <FormLabel>Prédio</FormLabel>
             <Input
+              disabled={props.isUpdate}
               placeholder='Prédio'
               value={form.building}
               onChange={(event) => setForm((prev) => ({ ...prev, building: event.target.value }))}
