@@ -5,6 +5,7 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ChakraProvider } from '@chakra-ui/react';
 import Classrooms from './pages/classrooms';
+import Classes from 'pages/classes';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
@@ -14,6 +15,7 @@ root.render(
         <Routes>
           <Route path='/' element={<App />} />
           <Route path='/classrooms' element={<Classrooms />} />
+          <Route path='/classes' element={<Classes />} />
         </Routes>
       </Router>
     </ChakraProvider>

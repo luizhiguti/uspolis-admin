@@ -1,9 +1,10 @@
-import { CheckIcon, CloseIcon, DragHandleIcon } from '@chakra-ui/icons';
+import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
   Center,
   Flex,
+  Icon,
   IconButton,
   Menu,
   MenuButton,
@@ -23,7 +24,8 @@ import {
 import RegisterModal from 'components/classrooms/register.modal';
 import Navbar from 'components/common/navbar.component';
 import Classroom from 'models/classroom.model';
-import { SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { FaEllipsisV } from 'react-icons/fa';
 import ClassroomsService from 'services/classrooms.service';
 
 function Classrooms() {
@@ -71,7 +73,7 @@ function Classrooms() {
     <>
       <Navbar />
       <Center>
-        <Box p={4} maxW='1200px'>
+        <Box p={4} w='7xl' overflowX='auto'>
           <Flex align='center'>
             <Text fontSize='4xl' mb={4}>
               Salas de aula
@@ -105,7 +107,12 @@ function Classrooms() {
                     <Td>{it.updated_at}</Td>
                     <Td isNumeric>
                       <Menu>
-                        <MenuButton as={IconButton} aria-label='Options' icon={<DragHandleIcon />} variant='ghost' />
+                        <MenuButton
+                          as={IconButton}
+                          aria-label='Options'
+                          icon={<Icon as={FaEllipsisV} />}
+                          variant='ghost'
+                        />
                         <MenuList>
                           <MenuItem onClick={() => handleEditClick(it)}>Editar</MenuItem>
                           <MenuItem onClick={() => handleDeleteClick(it.classroom_name)}>Deletar</MenuItem>

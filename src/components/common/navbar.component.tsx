@@ -22,7 +22,10 @@ import {
 import { ReactNode } from 'react';
 import { FaUser } from 'react-icons/fa';
 
-const Links = [{ text: 'Salas', value: 'classrooms' }];
+const Links = [
+  { text: 'Salas', value: 'classrooms' },
+  { text: 'Turmas', value: 'classes' },
+];
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
   <Link
