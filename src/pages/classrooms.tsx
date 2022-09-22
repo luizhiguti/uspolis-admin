@@ -36,29 +36,32 @@ function Classrooms() {
     {
       accessorKey: 'building',
       header: 'Prédio',
+      meta: { isSelectable: true },
     },
     {
       accessorKey: 'floor',
       header: 'Andar',
+      meta: { isSelectable: true },
     },
     {
       accessorKey: 'capacity',
       header: 'Capacidade',
+      meta: { isSelectable: true },
     },
     {
       accessorKey: 'air_conditioning',
       header: 'Ar condicionado',
-      meta: { isBoolean: true },
+      meta: { isBoolean: true, isSelectable: true },
     },
     {
       accessorKey: 'projector',
       header: 'Projetor',
-      meta: { isBoolean: true },
+      meta: { isBoolean: true, isSelectable: true },
     },
     {
       accessorKey: 'accessibility',
       header: 'Acessibilidade',
-      meta: { isBoolean: true },
+      meta: { isBoolean: true, isSelectable: true },
     },
     {
       accessorKey: 'updated_at',
