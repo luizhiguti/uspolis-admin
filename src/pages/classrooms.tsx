@@ -1,4 +1,3 @@
-import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -11,17 +10,12 @@ import {
   MenuItem,
   MenuList,
   Spacer,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
-  Th,
-  Thead,
-  Tr,
   useDisclosure,
 } from '@chakra-ui/react';
+import { ColumnDef } from '@tanstack/react-table';
 import RegisterModal from 'components/classrooms/register.modal';
+import DataTable from 'components/common/dataTable.component';
 import Navbar from 'components/common/navbar.component';
 import Classroom from 'models/classroom.model';
 import { useEffect, useState } from 'react';
@@ -29,20 +23,60 @@ import { FaEllipsisV } from 'react-icons/fa';
 import ClassroomsService from 'services/classrooms.service';
 
 function Classrooms() {
-  const [classroomsList, setClassroomsList] = useState<Array<Classroom>>();
+  const [classroomsList, setClassroomsList] = useState<Array<Classroom>>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [registerFormData, setRegisterFormData] = useState();
   const [update, setUpdate] = useState(false);
 
-  const tableHeader = [
-    { name: 'Nome' },
-    { name: 'Prédio' },
-    { name: 'Andar' },
-    { name: 'Capacidade' },
-    { name: 'Ar Condicionado' },
-    { name: 'Projetor' },
-    { name: 'Acessibilidade' },
-    { name: 'Atualizado em' },
+  const columns: ColumnDef<Classroom>[] = [
+    {
+      accessorKey: 'classroom_name',
+      header: 'Nome',
+    },
+    {
+      accessorKey: 'building',
+      header: 'Prédio',
+    },
+    {
+      accessorKey: 'floor',
+      header: 'Andar',
+    },
+    {
+      accessorKey: 'capacity',
+      header: 'Capacidade',
+    },
+    {
+      accessorKey: 'air_conditioning',
+      header: 'Ar condicionado',
+      meta: { isBoolean: true },
+    },
+    {
+      accessorKey: 'projector',
+      header: 'Projetor',
+      meta: { isBoolean: true },
+    },
+    {
+      accessorKey: 'accessibility',
+      header: 'Acessibilidade',
+      meta: { isBoolean: true },
+    },
+    {
+      accessorKey: 'updated_at',
+      header: 'Atualizado em',
+    },
+    {
+      id: 'options',
+      meta: { isNumeric: true },
+      cell: ({ row }) => (
+        <Menu>
+          <MenuButton as={IconButton} aria-label='Options' icon={<Icon as={FaEllipsisV} />} variant='ghost' />
+          <MenuList>
+            <MenuItem onClick={() => handleEditClick(row.original)}>Editar</MenuItem>
+            <MenuItem onClick={() => handleDeleteClick(row.original.classroom_name)}>Deletar</MenuItem>
+          </MenuList>
+        </Menu>
+      ),
+    },
   ];
 
   const classroomService = new ClassroomsService();
@@ -59,6 +93,7 @@ function Classrooms() {
   }
 
   function handleEditClick(data: any) {
+    console.log(data);
     setRegisterFormData(data);
     setUpdate(true);
     onOpen();
@@ -84,46 +119,7 @@ function Classrooms() {
             </Button>
             <RegisterModal isOpen={isOpen} onClose={onClose} formData={registerFormData} isUpdate={update} />
           </Flex>
-          <TableContainer border='1px' borderRadius='lg' borderColor='blueviolet'>
-            <Table>
-              <Thead>
-                <Tr>
-                  {tableHeader?.map((it) => (
-                    <Th key={it.name}>{it.name}</Th>
-                  ))}
-                  <Th></Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {classroomsList?.map((it) => (
-                  <Tr key={it.classroom_name + it.building}>
-                    <Td>{it.classroom_name}</Td>
-                    <Td>{it.building}</Td>
-                    <Td>{it.floor}</Td>
-                    <Td>{it.capacity}</Td>
-                    <Td>{it.air_conditioning ? <CheckIcon /> : <CloseIcon />}</Td>
-                    <Td>{it.projector ? <CheckIcon /> : <CloseIcon />}</Td>
-                    <Td>{it.accessibility ? <CheckIcon /> : <CloseIcon />}</Td>
-                    <Td>{it.updated_at}</Td>
-                    <Td isNumeric>
-                      <Menu>
-                        <MenuButton
-                          as={IconButton}
-                          aria-label='Options'
-                          icon={<Icon as={FaEllipsisV} />}
-                          variant='ghost'
-                        />
-                        <MenuList>
-                          <MenuItem onClick={() => handleEditClick(it)}>Editar</MenuItem>
-                          <MenuItem onClick={() => handleDeleteClick(it.classroom_name)}>Deletar</MenuItem>
-                        </MenuList>
-                      </Menu>
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
+          <DataTable data={classroomsList} columns={columns} />
         </Box>
       </Center>
     </>

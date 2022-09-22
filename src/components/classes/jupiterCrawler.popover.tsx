@@ -77,7 +77,7 @@ export default function JupiterCrawlerPopover({ subjects = [] }: JupiterCrawlerP
           </InputGroup>
           <UnorderedList p={2}>
             {subjectsList.map((it) => (
-              <ListItem>{it}</ListItem>
+              <ListItem key={it}>{it}</ListItem>
             ))}
           </UnorderedList>
         </PopoverBody>
