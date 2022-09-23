@@ -12,7 +12,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, CellContext } from '@tanstack/react-table';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import DataTable from 'components/common/dataTable.component';
 import Dialog from 'components/common/dialog.component';
@@ -22,6 +22,7 @@ import { useEffect, useState } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
 import ClassesService from 'services/classes.service';
 import { Capitalize } from 'utils/formatters';
+import { FilterArray } from 'utils/tableFiltersFns';
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
@@ -51,19 +52,20 @@ function Classes() {
           ))}
         </Box>
       ),
+      filterFn: FilterArray,
     },
     {
-      accessorKey: 'week_days',
+      accessorFn: (row) =>
+        row.week_days?.map((day, index) => `${Capitalize(day)} ${row.start_time[index]} - ${row.end_time[index]}`),
       header: 'Horários',
-      cell: ({ row }) => (
+      cell: (info) => (
         <Box>
-          {row.original.week_days?.map((day, index) => (
-            <Text key={day}>
-              {`${Capitalize(day)} ${row.original.start_time[index]} - ${row.original.end_time[0]}`}
-            </Text>
+          {(info.getValue() as string[]).map((it) => (
+            <Text key={it}>{it}</Text>
           ))}
         </Box>
       ),
+      filterFn: FilterArray,
     },
     {
       id: 'options',

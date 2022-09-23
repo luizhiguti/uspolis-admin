@@ -1,17 +1,19 @@
 import { CheckIcon, CloseIcon, TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
-import { Box, chakra, Input, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, chakra, Input, Select, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import {
   Column,
   ColumnDef,
   ColumnFiltersState,
   flexRender,
   getCoreRowModel,
+  getFacetedUniqueValues,
   getFilteredRowModel,
   getSortedRowModel,
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { Textify } from 'utils/formatters';
 
 export type DataTableProps<Data extends object> = {
   data: Data[];
@@ -30,6 +32,7 @@ export default function DataTable<Data extends object>({ data, columns }: DataTa
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnFiltersChange: setColumnFilters,
+    getFacetedUniqueValues: getFacetedUniqueValues(),
     state: {
       sorting,
       columnFilters,
@@ -109,8 +112,28 @@ export default function DataTable<Data extends object>({ data, columns }: DataTa
 
 function Filter({ column }: { column: Column<any, any> }) {
   const columnFilterValue = column.getFilterValue();
+  const meta: any = column.columnDef.meta;
+  const sortedUniqueValues = useMemo(
+    () => Array.from(column.getFacetedUniqueValues().keys()).sort(),
+    [column.getFacetedUniqueValues()],
+  );
 
-  return (
+  return meta?.isSelectable ? (
+    <Select
+      id={column.id + 'list'}
+      placeholder='Selecione...'
+      size='sm'
+      mt='2'
+      value={(columnFilterValue ?? '') as string}
+      onChange={(e) => column.setFilterValue(e.target.value)}
+    >
+      {sortedUniqueValues.map((value: any) => (
+        <option value={value} key={value}>
+          {Textify(value)}
+        </option>
+      ))}
+    </Select>
+  ) : (
     <Input
       type='text'
       value={(columnFilterValue ?? '') as string}

@@ -21,6 +21,7 @@ import Classroom from 'models/classroom.model';
 import { useEffect, useState } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
 import ClassroomsService from 'services/classrooms.service';
+import { FilterBoolean, FilterNumber } from 'utils/tableFiltersFns';
 
 function Classrooms() {
   const [classroomsList, setClassroomsList] = useState<Array<Classroom>>([]);
@@ -36,29 +37,37 @@ function Classrooms() {
     {
       accessorKey: 'building',
       header: 'Prédio',
+      meta: { isSelectable: true },
     },
     {
       accessorKey: 'floor',
       header: 'Andar',
+      meta: { isSelectable: true },
+      filterFn: FilterNumber,
     },
     {
       accessorKey: 'capacity',
       header: 'Capacidade',
+      meta: { isSelectable: true },
+      filterFn: FilterNumber,
     },
     {
       accessorKey: 'air_conditioning',
       header: 'Ar condicionado',
-      meta: { isBoolean: true },
+      meta: { isBoolean: true, isSelectable: true },
+      filterFn: FilterBoolean,
     },
     {
       accessorKey: 'projector',
       header: 'Projetor',
-      meta: { isBoolean: true },
+      meta: { isBoolean: true, isSelectable: true },
+      filterFn: FilterBoolean,
     },
     {
       accessorKey: 'accessibility',
       header: 'Acessibilidade',
-      meta: { isBoolean: true },
+      meta: { isBoolean: true, isSelectable: true },
+      filterFn: FilterBoolean,
     },
     {
       accessorKey: 'updated_at',
