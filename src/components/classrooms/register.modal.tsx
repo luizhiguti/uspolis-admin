@@ -15,6 +15,10 @@ import {
   NumberInput,
   NumberInputField,
 } from '@chakra-ui/react';
+
+import { CreatableSelect, GroupBase } from 'chakra-react-select';
+import { Buildings } from 'models/enums/buildings.enum';
+
 import { useEffect, useState } from 'react';
 import ClassroomsService from 'services/classrooms.service';
 
@@ -25,12 +29,18 @@ interface RegisterModalProps {
   isUpdate: boolean;
 }
 
+interface LabelValueOptions {
+  label: string;
+  value: string;
+}
+
 export default function RegisterModal(props: RegisterModalProps) {
   const classroomService = new ClassroomsService();
+  const buildingsOptions = Object.values(Buildings).map((it) => ({ label: it, value: it }));
 
   const initialForm = {
     classroom_name: '',
-    building: '',
+    building: Buildings.BIENIO,
     floor: 0,
     capacity: 0,
     air_conditioning: false,
@@ -48,19 +58,16 @@ export default function RegisterModal(props: RegisterModalProps) {
     if (isEmpty(form.classroom_name)) return;
     if (props.isUpdate) {
       classroomService.update(form.classroom_name, form).then((it) => {
-        setForm(initialForm);
         props.onClose();
       });
     } else {
       classroomService.create(form).then((it) => {
-        setForm(initialForm);
         props.onClose();
       });
     }
   }
 
   function handleCloseModal() {
-    setForm(initialForm);
     props.onClose();
   }
 
@@ -87,11 +94,13 @@ export default function RegisterModal(props: RegisterModalProps) {
 
           <FormControl mt={4}>
             <FormLabel>Prédio</FormLabel>
-            <Input
-              disabled={props.isUpdate}
-              placeholder='Prédio'
-              value={form.building}
-              onChange={(event) => setForm((prev) => ({ ...prev, building: event.target.value }))}
+            <CreatableSelect<LabelValueOptions, false, GroupBase<LabelValueOptions>>
+              id='buildings-select'
+              options={buildingsOptions}
+              closeMenuOnSelect
+              isDisabled={props.isUpdate}
+              inputValue={form.building}
+              onInputChange={(value) => setForm((prev) => ({ ...prev, building: value as Buildings }))}
             />
           </FormControl>
 

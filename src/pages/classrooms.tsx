@@ -102,7 +102,6 @@ function Classrooms() {
   }
 
   function handleEditClick(data: any) {
-    console.log(data);
     setRegisterFormData(data);
     setUpdate(true);
     onOpen();
