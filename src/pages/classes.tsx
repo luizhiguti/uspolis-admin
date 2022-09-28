@@ -135,6 +135,7 @@ function Classes() {
             onClose={onClosePreferences}
             subjectCode={selectedClass?.subject_code ?? ''}
             classCode={selectedClass?.class_code ?? ''}
+            formData={selectedClass?.preferences}
           />
           <DataTable data={classesList} columns={columns} />
         </Box>

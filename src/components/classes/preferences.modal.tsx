@@ -15,6 +15,7 @@ import {
   NumberInputField,
 } from '@chakra-ui/react';
 import { CreatableSelect, GroupBase, OptionBase, PropsValue } from 'chakra-react-select';
+import { Preferences } from 'models/class.model';
 import { Buildings } from 'models/enums/buildings.enum';
 
 import { useEffect, useState } from 'react';
@@ -23,7 +24,7 @@ import ClassesService from 'services/classes.service';
 interface PreferencesModalProps {
   isOpen: boolean;
   onClose: () => void;
-  formData?: any; // data from database
+  formData?: Preferences; // data from database
   subjectCode: string;
   classCode: string;
 }
@@ -37,19 +38,16 @@ export default function PreferencesModal(props: PreferencesModalProps) {
   const buildingsOptions = Object.values(Buildings).map((it) => ({ label: it, value: it }));
   const classesService = new ClassesService();
 
-  const initialForm = {
+  const initialForm: Preferences = {
     building: '',
-    capacity: 0,
-    air_conditioning: false,
-    projector: false,
-    accessibility: false,
   };
 
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState(props.formData ?? initialForm);
 
   useEffect(() => {
     // set data from database
     if (props.formData) setForm(props.formData);
+    else setForm(initialForm);
   }, [props.formData]);
 
   function handleSaveClick() {
@@ -81,8 +79,8 @@ export default function PreferencesModal(props: PreferencesModalProps) {
               id='buildings-select'
               options={buildingsOptions}
               closeMenuOnSelect
-              placeholder='Prédio'
-              defaultValue={{ label: form.building, value: form.building }}
+              placeholder={form.building}
+              // defaultValue={{ label: form.building, value: form.building }}
               onChange={(option) => setForm((prev) => ({ ...prev, building: option?.value as Buildings }))}
               formatCreateLabel={(value) => `Novo prédio "${value}"`}
             />
@@ -92,7 +90,7 @@ export default function PreferencesModal(props: PreferencesModalProps) {
             <FormLabel>Capacidade mínima</FormLabel>
             <NumberInput
               placeholder='Capacidade'
-              value={form.capacity}
+              value={form.min_capacity}
               onChange={(_, value) => setForm((prev) => ({ ...prev, capacity: isNaN(value) ? 0 : value }))}
               min={0}
             >
