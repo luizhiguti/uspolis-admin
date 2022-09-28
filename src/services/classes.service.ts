@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import Class from 'models/class.model';
+import Class, { Preferences } from 'models/class.model';
 import HttpService from './http.service';
 
 const USPOLIS_SERVER_URL = 'http://localhost:5000/api'; // TODO: environment variable
@@ -19,5 +19,9 @@ export default class ClassesService extends HttpService {
 
   delete(subject_code: string, class_code: string) {
     return this.http.delete(`${subject_code}/${class_code}`);
+  }
+
+  patchPreferences(subjectCode: string, classCode: string, data: Preferences) {
+    return this.http.patch(`${subjectCode}/${classCode}`, data);
   }
 }

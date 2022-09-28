@@ -4,7 +4,6 @@ import {
   FormControl,
   FormLabel,
   HStack,
-  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -15,33 +14,31 @@ import {
   NumberInput,
   NumberInputField,
 } from '@chakra-ui/react';
-
-import { CreatableSelect, GroupBase } from 'chakra-react-select';
+import { CreatableSelect, GroupBase, OptionBase, PropsValue } from 'chakra-react-select';
 import { Buildings } from 'models/enums/buildings.enum';
 
 import { useEffect, useState } from 'react';
-import ClassroomsService from 'services/classrooms.service';
+import ClassesService from 'services/classes.service';
 
-interface RegisterModalProps {
+interface PreferencesModalProps {
   isOpen: boolean;
   onClose: () => void;
-  formData?: any;
-  isUpdate: boolean;
+  formData?: any; // data from database
+  subjectCode: string;
+  classCode: string;
 }
 
-interface LabelValueOptions {
+interface LabelValueOptions extends OptionBase {
   label: string;
   value: string;
 }
 
-export default function RegisterModal(props: RegisterModalProps) {
-  const classroomService = new ClassroomsService();
+export default function PreferencesModal(props: PreferencesModalProps) {
   const buildingsOptions = Object.values(Buildings).map((it) => ({ label: it, value: it }));
+  const classesService = new ClassesService();
 
   const initialForm = {
-    classroom_name: '',
-    building: Buildings.BIENIO,
-    floor: 0,
+    building: '',
     capacity: 0,
     air_conditioning: false,
     projector: false,
@@ -51,20 +48,16 @@ export default function RegisterModal(props: RegisterModalProps) {
   const [form, setForm] = useState(initialForm);
 
   useEffect(() => {
+    // set data from database
     if (props.formData) setForm(props.formData);
   }, [props.formData]);
 
   function handleSaveClick() {
-    if (isEmpty(form.classroom_name)) return;
-    if (props.isUpdate) {
-      classroomService.update(form.classroom_name, form).then((it) => {
-        props.onClose();
-      });
-    } else {
-      classroomService.create(form).then((it) => {
-        props.onClose();
-      });
-    }
+    if (isEmpty(form.building)) return;
+    classesService.patchPreferences(props.subjectCode, props.classCode, form).then((it) => {
+      console.log(it);
+      props.onClose();
+    });
   }
 
   function handleCloseModal() {
@@ -79,26 +72,15 @@ export default function RegisterModal(props: RegisterModalProps) {
     <Modal isOpen={props.isOpen} onClose={handleCloseModal}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{props.isUpdate ? 'Editar informações da sala' : 'Cadastrar uma sala'}</ModalHeader>
+        <ModalHeader>Preferências</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
-          <FormControl isInvalid={isEmpty(form.classroom_name)}>
-            <FormLabel>Nome</FormLabel>
-            <Input
-              disabled={props.isUpdate}
-              placeholder='Nome'
-              value={form.classroom_name}
-              onChange={(event) => setForm((prev) => ({ ...prev, classroom_name: event.target.value }))}
-            />
-          </FormControl>
-
-          <FormControl mt={4}>
+          <FormControl isInvalid={isEmpty(form.building)}>
             <FormLabel>Prédio</FormLabel>
             <CreatableSelect<LabelValueOptions, false, GroupBase<LabelValueOptions>>
               id='buildings-select'
               options={buildingsOptions}
               closeMenuOnSelect
-              isDisabled={props.isUpdate}
               placeholder='Prédio'
               defaultValue={{ label: form.building, value: form.building }}
               onChange={(option) => setForm((prev) => ({ ...prev, building: option?.value as Buildings }))}
@@ -107,18 +89,7 @@ export default function RegisterModal(props: RegisterModalProps) {
           </FormControl>
 
           <FormControl mt={4}>
-            <FormLabel>Andar</FormLabel>
-            <NumberInput
-              placeholder='Andar'
-              value={form.floor}
-              onChange={(_, value) => setForm((prev) => ({ ...prev, floor: isNaN(value) ? 0 : value }))}
-            >
-              <NumberInputField />
-            </NumberInput>
-          </FormControl>
-
-          <FormControl mt={4}>
-            <FormLabel>Capacidade</FormLabel>
+            <FormLabel>Capacidade mínima</FormLabel>
             <NumberInput
               placeholder='Capacidade'
               value={form.capacity}

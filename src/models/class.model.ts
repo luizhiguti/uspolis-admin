@@ -12,4 +12,13 @@ export default interface Class {
   vacancies: number;
   subscribers: number;
   pendings: number;
+  preferences?: Preferences;
+}
+
+export interface Preferences {
+  building: string;
+  min_capacity?: number;
+  air_conditioning?: boolean;
+  projector?: boolean;
+  accessibility?: boolean;
 }

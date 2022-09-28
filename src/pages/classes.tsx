@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react';
 import { ColumnDef, CellContext } from '@tanstack/react-table';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
+import PreferencesModal from 'components/classes/preferences.modal';
 import DataTable from 'components/common/dataTable.component';
 import Dialog from 'components/common/dialog.component';
 import Navbar from 'components/common/navbar.component';
@@ -26,7 +27,8 @@ import { FilterArray } from 'utils/tableFiltersFns';
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
+  const { isOpen: isOpenPreferences, onOpen: onOpenPreferences, onClose: onClosePreferences } = useDisclosure();
   const [selectedClass, setSelectedClass] = useState<Class>();
 
   const columns: ColumnDef<Class>[] = [
@@ -74,7 +76,6 @@ function Classes() {
         <Menu>
           <MenuButton as={IconButton} aria-label='Options' icon={<Icon as={FaEllipsisV} />} variant='ghost' />
           <MenuList>
-            {/* <MenuItem onClick={() => handleEditClick(it)}>Editar</MenuItem> */}
             <MenuItem onClick={() => handlePreferencesClick(row.original)}>Preferências</MenuItem>
             <MenuItem onClick={() => handleDeleteClick(row.original)}>Deletar</MenuItem>
           </MenuList>
@@ -94,19 +95,22 @@ function Classes() {
 
   function handleDeleteClick(obj: Class) {
     setSelectedClass(obj);
-    onOpen();
+    onOpenDelete();
   }
 
   function handleDelete() {
     if (selectedClass) {
       classesService.delete(selectedClass.subject_code, selectedClass.class_code).then((it) => {
         console.log(it.data);
-        onClose();
+        onCloseDelete();
       });
     }
   }
 
-  function handlePreferencesClick(obj: Class) {}
+  function handlePreferencesClick(obj: Class) {
+    setSelectedClass(obj);
+    onOpenPreferences();
+  }
 
   return (
     <>
@@ -121,10 +125,16 @@ function Classes() {
             <JupiterCrawlerPopover />
           </Flex>
           <Dialog
-            isOpen={isOpen}
-            onClose={onClose}
+            isOpen={isOpenDelete}
+            onClose={onCloseDelete}
             onConfirm={handleDelete}
             title={`Deseja deletar ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
+          />
+          <PreferencesModal
+            isOpen={isOpenPreferences}
+            onClose={onClosePreferences}
+            subjectCode={selectedClass?.subject_code ?? ''}
+            classCode={selectedClass?.class_code ?? ''}
           />
           <DataTable data={classesList} columns={columns} />
         </Box>
