@@ -13,8 +13,9 @@ import {
   ModalOverlay,
   NumberInput,
   NumberInputField,
+  Select,
 } from '@chakra-ui/react';
-import { CreatableSelect, GroupBase, OptionBase, PropsValue } from 'chakra-react-select';
+// import { CreatableSelect, GroupBase, OptionBase, PropsValue } from 'chakra-react-select';
 import { Preferences } from 'models/class.model';
 import { Buildings } from 'models/enums/buildings.enum';
 
@@ -29,17 +30,18 @@ interface PreferencesModalProps {
   classCode: string;
 }
 
-interface LabelValueOptions extends OptionBase {
-  label: string;
-  value: string;
-}
+// interface LabelValueOptions extends OptionBase {
+//   label: string;
+//   value: string;
+// }
 
 export default function PreferencesModal(props: PreferencesModalProps) {
-  const buildingsOptions = Object.values(Buildings).map((it) => ({ label: it, value: it }));
+  // const buildingsOptions = Object.values(Buildings).map((it) => ({ label: it, value: it }));
+  const buildingsOptions = Object.values(Buildings);
   const classesService = new ClassesService();
 
   const initialForm: Preferences = {
-    building: '',
+    building: Buildings.BIENIO,
   };
 
   const [form, setForm] = useState(props.formData ?? initialForm);
@@ -75,7 +77,7 @@ export default function PreferencesModal(props: PreferencesModalProps) {
         <ModalBody pb={6}>
           <FormControl isInvalid={isEmpty(form.building)}>
             <FormLabel>Prédio</FormLabel>
-            <CreatableSelect<LabelValueOptions, false, GroupBase<LabelValueOptions>>
+            {/* <CreatableSelect<LabelValueOptions, false, GroupBase<LabelValueOptions>>
               id='buildings-select'
               options={buildingsOptions}
               closeMenuOnSelect
@@ -83,7 +85,17 @@ export default function PreferencesModal(props: PreferencesModalProps) {
               // defaultValue={{ label: form.building, value: form.building }}
               onChange={(option) => setForm((prev) => ({ ...prev, building: option?.value as Buildings }))}
               formatCreateLabel={(value) => `Novo prédio "${value}"`}
-            />
+            /> */}
+            <Select
+              value={form.building}
+              onChange={(event) => setForm((prev) => ({ ...prev, building: event.target.value as Buildings }))}
+            >
+              {buildingsOptions.map((it) => (
+                <option key={it} value={it}>
+                  {it}
+                </option>
+              ))}
+            </Select>
           </FormControl>
 
           <FormControl mt={4}>

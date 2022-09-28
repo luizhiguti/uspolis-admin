@@ -14,9 +14,10 @@ import {
   ModalOverlay,
   NumberInput,
   NumberInputField,
+  Select,
 } from '@chakra-ui/react';
 
-import { CreatableSelect, GroupBase } from 'chakra-react-select';
+// import { CreatableSelect, GroupBase } from 'chakra-react-select';
 import { Buildings } from 'models/enums/buildings.enum';
 
 import { useEffect, useState } from 'react';
@@ -29,14 +30,15 @@ interface RegisterModalProps {
   isUpdate: boolean;
 }
 
-interface LabelValueOptions {
-  label: string;
-  value: string;
-}
+// interface LabelValueOptions {
+//   label: string;
+//   value: string;
+// }
 
 export default function RegisterModal(props: RegisterModalProps) {
   const classroomService = new ClassroomsService();
-  const buildingsOptions = Object.values(Buildings).map((it) => ({ label: it, value: it }));
+  // const buildingsOptions = Object.values(Buildings).map((it) => ({ label: it, value: it }));
+  const buildingsOptions = Object.values(Buildings);
 
   const initialForm = {
     classroom_name: '',
@@ -92,9 +94,9 @@ export default function RegisterModal(props: RegisterModalProps) {
             />
           </FormControl>
 
-          <FormControl mt={4}>
+          <FormControl mt={4} isInvalid={isEmpty(form.building)} isDisabled={props.isUpdate}>
             <FormLabel>Prédio</FormLabel>
-            <CreatableSelect<LabelValueOptions, false, GroupBase<LabelValueOptions>>
+            {/* <CreatableSelect<LabelValueOptions, false, GroupBase<LabelValueOptions>>
               id='buildings-select'
               options={buildingsOptions}
               closeMenuOnSelect
@@ -103,7 +105,17 @@ export default function RegisterModal(props: RegisterModalProps) {
               defaultValue={{ label: form.building, value: form.building }}
               onChange={(option) => setForm((prev) => ({ ...prev, building: option?.value as Buildings }))}
               formatCreateLabel={(value) => `Novo prédio "${value}"`}
-            />
+            /> */}
+            <Select
+              value={form.building}
+              onChange={(event) => setForm((prev) => ({ ...prev, building: event.target.value as Buildings }))}
+            >
+              {buildingsOptions.map((it) => (
+                <option key={it} value={it}>
+                  {it}
+                </option>
+              ))}
+            </Select>
           </FormControl>
 
           <FormControl mt={4}>
@@ -132,12 +144,6 @@ export default function RegisterModal(props: RegisterModalProps) {
           <FormControl mt={4}>
             <HStack>
               <Checkbox
-                isChecked={form.accessibility}
-                onChange={(event) => setForm((prev) => ({ ...prev, accessibility: event.target.checked }))}
-              >
-                Acessibilidade
-              </Checkbox>
-              <Checkbox
                 isChecked={form.air_conditioning}
                 onChange={(event) => setForm((prev) => ({ ...prev, air_conditioning: event.target.checked }))}
               >
@@ -148,6 +154,12 @@ export default function RegisterModal(props: RegisterModalProps) {
                 onChange={(event) => setForm((prev) => ({ ...prev, projector: event.target.checked }))}
               >
                 Projetor
+              </Checkbox>
+              <Checkbox
+                isChecked={form.accessibility}
+                onChange={(event) => setForm((prev) => ({ ...prev, accessibility: event.target.checked }))}
+              >
+                Acessibilidade
               </Checkbox>
             </HStack>
           </FormControl>
