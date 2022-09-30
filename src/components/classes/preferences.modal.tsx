@@ -49,7 +49,6 @@ export default function PreferencesModal(props: PreferencesModalProps) {
   useEffect(() => {
     // set data from database
     if (props.formData) setForm(props.formData);
-    else setForm(initialForm);
   }, [props.formData]);
 
   function handleSaveClick() {

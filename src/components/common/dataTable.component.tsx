@@ -45,6 +45,7 @@ export default function DataTable<Data extends object>({ data, columns }: DataTa
         table.setSorting([{ id: 'fullName', desc: false }]);
       }
     }
+    // eslint-disable-next-line
   }, [table.getState().columnFilters[0]?.id]);
 
   return (
@@ -115,6 +116,7 @@ function Filter({ column }: { column: Column<any, any> }) {
   const meta: any = column.columnDef.meta;
   const sortedUniqueValues = useMemo(
     () => Array.from(column.getFacetedUniqueValues().keys()).sort(),
+    // eslint-disable-next-line
     [column.getFacetedUniqueValues()],
   );
 

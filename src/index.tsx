@@ -4,8 +4,13 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ChakraProvider } from '@chakra-ui/react';
-import Classrooms from './pages/classrooms';
+import Classrooms from 'pages/classrooms';
 import Classes from 'pages/classes';
+
+import { Amplify } from 'aws-amplify';
+import awsConfig from 'aws-config';
+
+Amplify.configure(awsConfig);
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(

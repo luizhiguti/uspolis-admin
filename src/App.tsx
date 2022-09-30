@@ -1,9 +1,8 @@
-import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { Link } from 'react-router-dom';
 
-// TODO: login page
+// TODO: uspolis page
 function App() {
   return (
     <div className='App'>

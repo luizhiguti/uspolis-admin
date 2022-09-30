@@ -1,3 +1,4 @@
+import { withAuthenticator } from '@aws-amplify/ui-react';
 import {
   Box,
   Center,
@@ -10,9 +11,9 @@ import {
   MenuList,
   Spacer,
   Text,
-  useDisclosure,
+  useDisclosure
 } from '@chakra-ui/react';
-import { ColumnDef, CellContext } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import PreferencesModal from 'components/classes/preferences.modal';
 import DataTable from 'components/common/dataTable.component';
@@ -24,6 +25,7 @@ import { FaEllipsisV } from 'react-icons/fa';
 import ClassesService from 'services/classes.service';
 import { Capitalize } from 'utils/formatters';
 import { FilterArray } from 'utils/tableFiltersFns';
+
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
@@ -144,4 +146,4 @@ function Classes() {
   );
 }
 
-export default Classes;
+export default withAuthenticator(Classes, { hideSignUp: true });
