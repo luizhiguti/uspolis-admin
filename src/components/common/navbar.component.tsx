@@ -19,7 +19,8 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import { Auth } from 'aws-amplify';
+import { ReactNode, useEffect, useState } from 'react';
 import { FaUser } from 'react-icons/fa';
 
 const Links = [
@@ -44,6 +45,15 @@ const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
 
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [username, setUsername] = useState('');
+
+  function handleClickLogout() {
+    Auth.signOut();
+  }
+
+  useEffect(() => {
+    Auth.currentUserInfo().then((it) => setUsername(it?.username));
+  }, []);
 
   return (
     <>
@@ -58,7 +68,7 @@ export default function Navbar() {
           />
           <HStack spacing={8} alignItems={'center'}>
             <Box>
-              <NavLink to='/'>USPolis</NavLink>
+              <NavLink to='/index'>USPolis</NavLink>
             </Box>
             <HStack as={'nav'} spacing={4} display={{ base: 'none', md: 'flex' }}>
               {Links.map((link) => (
@@ -72,14 +82,14 @@ export default function Navbar() {
             <Menu>
               <MenuButton as={Button} rounded={'full'} variant={'link'} cursor={'pointer'} minW={0} colorScheme='dark'>
                 <Flex alignItems={'center'} gap='1'>
-                  <Text>Usuário</Text>
+                  <Text>{username}</Text>
                   <Icon as={FaUser} />
                 </Flex>
               </MenuButton>
               <MenuList>
                 <MenuItem>Perfil</MenuItem>
                 <MenuDivider />
-                <MenuItem>Sair</MenuItem>
+                <MenuItem onClick={handleClickLogout}>Sair</MenuItem>
               </MenuList>
             </Menu>
           </Flex>

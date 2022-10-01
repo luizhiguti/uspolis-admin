@@ -1,6 +1,6 @@
-import logo from './logo.svg';
-import './App.css';
 import { Link } from 'react-router-dom';
+import './App.css';
+import logo from './logo.svg';
 
 // TODO: uspolis page
 function App() {
@@ -8,7 +8,7 @@ function App() {
     <div className='App'>
       <header className='App-header'>
         <img src={logo} className='App-logo' alt='logo' />
-        <Link to='classrooms'>Salas</Link>
+        <Link to='/classrooms'>Salas</Link>
       </header>
     </div>
   );
