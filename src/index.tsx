@@ -3,7 +3,7 @@ import Classes from 'pages/classes';
 import Classrooms from 'pages/classrooms';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
@@ -19,6 +19,7 @@ root.render(
     <ChakraProvider>
       <Router>
         <Routes>
+          <Route path='/' element={<Navigate to='/index' />} />
           <Route path='/index' element={<App />} />
           {/* Private Routes */}
           <Route path='/' element={<AuthRoute />}>

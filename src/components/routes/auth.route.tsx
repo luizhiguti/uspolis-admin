@@ -18,4 +18,6 @@ function AuthRoute() {
   return <Outlet />;
 }
 
-export default withAuthenticator(AuthRoute);
+export default withAuthenticator(AuthRoute, {
+  hideSignUp: true,
+});
