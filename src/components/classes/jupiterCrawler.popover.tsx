@@ -53,7 +53,7 @@ export default function JupiterCrawlerPopover({ subjects = [] }: JupiterCrawlerP
   return (
     <Popover isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
       <PopoverTrigger>
-        <Button colorScheme='blue'>Atualizar com Júpiter</Button>
+        <Button colorScheme='blue'>Adicionar disciplinas</Button>
       </PopoverTrigger>
       <PopoverContent>
         <PopoverCloseButton />

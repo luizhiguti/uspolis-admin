@@ -12,7 +12,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import { ColumnDef, CellContext } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import PreferencesModal from 'components/classes/preferences.modal';
 import DataTable from 'components/common/dataTable.component';

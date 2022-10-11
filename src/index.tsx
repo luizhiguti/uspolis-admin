@@ -1,11 +1,17 @@
+import { ChakraProvider } from '@chakra-ui/react';
+import Classes from 'pages/classes';
+import Classrooms from 'pages/classrooms';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ChakraProvider } from '@chakra-ui/react';
-import Classrooms from './pages/classrooms';
-import Classes from 'pages/classes';
+
+import { Amplify } from 'aws-amplify';
+import awsConfig from 'aws-config';
+import AuthRoute from 'components/routes/auth.route';
+
+Amplify.configure(awsConfig);
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
@@ -13,9 +19,13 @@ root.render(
     <ChakraProvider>
       <Router>
         <Routes>
-          <Route path='/' element={<App />} />
-          <Route path='/classrooms' element={<Classrooms />} />
-          <Route path='/classes' element={<Classes />} />
+          <Route path='/' element={<Navigate to='/index' />} />
+          <Route path='/index' element={<App />} />
+          {/* Private Routes */}
+          <Route path='/' element={<AuthRoute />}>
+            <Route path='classrooms' element={<Classrooms />} />
+            <Route path='classes' element={<Classes />} />
+          </Route>
         </Routes>
       </Router>
     </ChakraProvider>
