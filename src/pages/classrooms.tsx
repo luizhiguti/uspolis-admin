@@ -21,7 +21,7 @@ import Classroom from 'models/classroom.model';
 import { useEffect, useState } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
 import ClassroomsService from 'services/classrooms.service';
-import { FilterBoolean, FilterNumber } from 'utils/tableFiltersFns';
+import { FilterBoolean, FilterNumber } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 function Classrooms() {
   const [classroomsList, setClassroomsList] = useState<Array<Classroom>>([]);

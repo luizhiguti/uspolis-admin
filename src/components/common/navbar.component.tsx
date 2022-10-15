@@ -26,6 +26,7 @@ import { FaUser } from 'react-icons/fa';
 const Links = [
   { text: 'Salas', value: 'classrooms' },
   { text: 'Turmas', value: 'classes' },
+  { text: 'Alocações', value: 'allocations' },
 ];
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (

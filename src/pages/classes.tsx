@@ -23,7 +23,7 @@ import { useEffect, useState } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
 import ClassesService from 'services/classes.service';
 import { Capitalize } from 'utils/formatters';
-import { FilterArray } from 'utils/tableFiltersFns';
+import { FilterArray } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
