@@ -1,91 +1,88 @@
 import { Grid, GridItem, Text } from '@chakra-ui/react';
-import { ColumnDef } from '@tanstack/react-table';
-import DataTable from 'components/common/dataTable.component';
+import FullCalendar from '@fullcalendar/react'; // must go before plugins
+import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import EventContent from 'components/allocations/eventContent';
 import Navbar from 'components/common/navbar.component';
-import { AllocationByWeekDays, ClassAllocation } from 'models/allocation.model';
 import { useEffect, useState } from 'react';
 import AllocationService from 'services/allocations.service';
-import { AllocationByWeekDaysMapper } from 'utils/allocationDataHelpers';
+import { AllocationEventsMapper, AllocationResourcesFromEventsMapper } from 'utils/mappers/allocations.mapper';
 
 function Allocations() {
-  const [allocation, setAllocation] = useState<ClassAllocation[]>([]);
-  const [tableData, setTableData] = useState<AllocationByWeekDays[]>([]);
-
-  const columnsByWeekDays: ColumnDef<AllocationByWeekDays>[] = [
-    {
-      accessorKey: 'sunday',
-      header: 'Segunda',
-      enableColumnFilter: false,
-      enableSorting: false,
-    },
-    {
-      accessorKey: 'tuesday',
-      header: 'Terça',
-      enableColumnFilter: false,
-      enableSorting: false,
-    },
-    {
-      accessorKey: 'wednesday',
-      header: 'Quarta',
-      enableColumnFilter: false,
-      enableSorting: false,
-    },
-    {
-      accessorKey: 'thursday',
-      header: 'Quinta',
-      enableColumnFilter: false,
-      enableSorting: false,
-    },
-    {
-      accessorKey: 'friday',
-      header: 'Sexta',
-      enableColumnFilter: false,
-      enableSorting: false,
-    },
-    {
-      accessorKey: 'saturday',
-      header: 'Sábado',
-      enableColumnFilter: false,
-      enableSorting: false,
-    },
-    {
-      accessorKey: 'monday',
-      header: 'Domingo',
-      enableColumnFilter: false,
-      enableSorting: false,
-    },
-  ];
+  const [allocation, setAllocation] = useState<any[]>([]);
+  const [resources, setResources] = useState<{ id: string }[]>();
 
   const allocationsService = new AllocationService();
 
   useEffect(() => {
-    allocationsService.getById('id-teste').then((it) => {
-      setAllocation(it.classes);
+    Promise.all([allocationsService.getById('id-teste')]).then((values) => {
+      setAllocation(AllocationEventsMapper(values[0]));
+      setResources(AllocationResourcesFromEventsMapper(values[0]));
     });
+    // eslint-disable-next-line
   }, []);
-
-  useEffect(() => {
-    setTableData(AllocationByWeekDaysMapper(allocation));
-    // ((AllocationByWeekDaysMapper(allocation)));
-  }, [allocation]);
 
   return (
     <>
       <Navbar />
       <Grid
-        templateAreas={`"header header"
-                        "nav main"`}
+        templateAreas={`"header"
+                        "main"`}
         gridTemplateRows={'1 1fr'}
-        gridTemplateColumns={'1 1fr'}
+        gridTemplateColumns={'1fr'}
       >
         <GridItem p={4} area={'header'}>
           <Text fontSize='4xl'>Alocações</Text>
         </GridItem>
-        <GridItem px='2' bg='pink.300' area={'nav'}>
-          Nav
-        </GridItem>
-        <GridItem px='2' area={'main'}>
-          <DataTable data={tableData} columns={columnsByWeekDays} />
+        <GridItem px='2' pb='2' area={'main'}>
+          <FullCalendar
+            schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
+            plugins={[timeGridPlugin, resourceTimelinePlugin]}
+            initialView='timeGridWeek'
+            views={{
+              timeGridWeek: {
+                slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
+                eventMaxStack: 1,
+                titleFormat: { year: 'numeric', month: 'long' },
+              },
+              resourceTimelineDay: {
+                slotDuration: '01:00',
+                slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
+                eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
+              },
+              resourceTimelineWeek: {
+                slotDuration: '01:00',
+                slotLabelFormat: [
+                  { weekday: 'short', day: '2-digit', month: '2-digit', omitCommas: true },
+                  { hour: '2-digit', minute: '2-digit' },
+                ],
+                titleFormat: { year: 'numeric', month: 'long' },
+                eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
+              },
+            }}
+            locale='pt-br'
+            height='auto'
+            slotMinTime='06:00'
+            firstDay={1}
+            allDaySlot={false}
+            headerToolbar={{
+              left: 'timeGridWeek resourceTimelineDay resourceTimelineWeek',
+              center: 'title',
+            }}
+            buttonText={{
+              today: 'Hoje',
+              timeGridWeek: 'Geral',
+              resourceTimelineDay: 'Sala / Dia',
+              resourceTimelineWeek: 'Sala / Semana',
+            }}
+            events={allocation}
+            eventContent={EventContent}
+            displayEventTime
+            resources={resources}
+            resourceAreaWidth='12%'
+            resourceGroupField='building'
+            resourceAreaHeaderContent='Salas'
+          />
         </GridItem>
       </Grid>
     </>
