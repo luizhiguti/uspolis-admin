@@ -1,4 +1,5 @@
-import Allocation from 'models/allocation.model';
+import { EventRenderRange } from '@fullcalendar/react';
+import Allocation, { AllocationByClassrooms } from 'models/allocation.model';
 import Classroom from 'models/classroom.model';
 import { WeekDays } from 'models/enums/weekDays.enum';
 
@@ -15,12 +16,16 @@ export function AllocationEventsMapper(allocation: Allocation[]) {
       building: it.building,
       classCode: classCodeText(it.class_code),
       professor: it.professor,
+      startTime: it.start_time,
+      endTime: it.end_time,
+      weekday: it.week_day,
     },
   }));
 }
 
 function weekDayInt(weekDay: string) {
   switch (weekDay) {
+    default:
     case WeekDays.Sunday:
       return 0;
     case WeekDays.Monday:
@@ -52,4 +57,43 @@ export function AllocationResourcesMapper(classrooms: Classroom[]) {
 
 export function AllocationResourcesFromEventsMapper(allocation: Allocation[]) {
   return Array.from(new Set(allocation.map((it) => ({ id: it.classroom, building: it.building }))));
+}
+
+export function EventsByClassroomMapper(events: EventRenderRange[]) {
+  const mapData = events
+    .map(({ def: { title, extendedProps, resourceIds } }) => ({
+      subjectCode: title,
+      classroom: resourceIds?.at(0) as string,
+      building: extendedProps?.building,
+      classCode: extendedProps?.classCode,
+      professor: extendedProps?.professor,
+      startTime: extendedProps?.startTime,
+      endTime: extendedProps?.endTime,
+      weekday: extendedProps?.weekday,
+    }))
+    .reduce((group: Map<string, AllocationByClassrooms[]>, event) => {
+      const { classroom } = event;
+      const classroomClasses = group.get(classroom);
+      classroomClasses ? group.set(classroom, classroomClasses.concat(event)) : group.set(classroom, [event]);
+
+      return group;
+    }, new Map());
+
+  // order events by day/time
+  mapData.forEach((value) =>
+    value.sort((a, b) => {
+      const firstMinusSecond = weekDayInt(a.weekday) - weekDayInt(b.weekday);
+      if (firstMinusSecond > 0) {
+        return 1;
+      } else if (firstMinusSecond === 0) {
+        return a.startTime > b.endTime ? 1 : -1;
+      } else return -1; // firstMinusSecond < 0
+    }),
+  );
+
+  const orderedByEventsCount = Array.from(mapData).sort(
+    ([_classroomA, dataA], [_classroomB, dataB]) => dataB.length - dataA.length,
+  );
+
+  return orderedByEventsCount;
 }

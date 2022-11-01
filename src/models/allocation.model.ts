@@ -10,3 +10,14 @@ export default interface Allocation {
   building: string;
   professor?: string;
 }
+
+export interface AllocationByClassrooms {
+  subjectCode: string;
+  classroom: string;
+  building: string;
+  classCode: string;
+  professor: string;
+  startTime: string;
+  endTime: string;
+  weekday: string;
+}
