@@ -1,9 +1,9 @@
 import { EventRenderRange } from '@fullcalendar/react';
-import Allocation, { AllocationByClassrooms } from 'models/allocation.model';
+import Event, { EventByClassrooms } from 'models/event.model';
 import Classroom from 'models/classroom.model';
 import { WeekDays } from 'models/enums/weekDays.enum';
 
-export function AllocationEventsMapper(allocation: Allocation[]) {
+export function AllocationEventsMapper(allocation: Event[]) {
   return allocation.map((it) => ({
     title: it.subject_code,
     daysOfWeek: [weekDayInt(it.week_day)],
@@ -55,7 +55,7 @@ export function AllocationResourcesMapper(classrooms: Classroom[]) {
   }));
 }
 
-export function AllocationResourcesFromEventsMapper(allocation: Allocation[]) {
+export function AllocationResourcesFromEventsMapper(allocation: Event[]) {
   return Array.from(new Set(allocation.map((it) => ({ id: it.classroom, building: it.building }))));
 }
 
@@ -71,7 +71,7 @@ export function EventsByClassroomMapper(events: EventRenderRange[]) {
       endTime: extendedProps?.endTime,
       weekday: extendedProps?.weekday,
     }))
-    .reduce((group: Map<string, AllocationByClassrooms[]>, event) => {
+    .reduce((group: Map<string, EventByClassrooms[]>, event) => {
       const { classroom } = event;
       const classroomClasses = group.get(classroom);
       classroomClasses ? group.set(classroom, classroomClasses.concat(event)) : group.set(classroom, [event]);

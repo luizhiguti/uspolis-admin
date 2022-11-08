@@ -1,4 +1,4 @@
-export default interface Allocation {
+export default interface Event {
   class_code: string;
   subject_code: string;
   start_period: string;
@@ -11,7 +11,7 @@ export default interface Allocation {
   professor?: string;
 }
 
-export interface AllocationByClassrooms {
+export interface EventByClassrooms {
   subjectCode: string;
   classroom: string;
   building: string;

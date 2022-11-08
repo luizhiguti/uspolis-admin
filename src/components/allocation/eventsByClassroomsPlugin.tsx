@@ -1,10 +1,10 @@
-import { Box, Button, Center, Flex, Heading, Stack, Text, Tooltip, Wrap, WrapItem } from '@chakra-ui/react';
+import { Box, Flex, Heading, Text, Tooltip, Wrap, WrapItem } from '@chakra-ui/react';
 import { createPlugin, sliceEvents } from '@fullcalendar/react';
 import { ColumnDef } from '@tanstack/react-table';
 import DataTable from 'components/common/dataTable.component';
-import { AllocationByClassrooms } from 'models/allocation.model';
+import { EventByClassrooms } from 'models/event.model';
 import { Capitalize } from 'utils/formatters';
-import { EventsByClassroomMapper } from 'utils/mappers/allocations.mapper';
+import { EventsByClassroomMapper } from 'utils/mappers/allocation.mapper';
 
 function ClassroomsTables(props: any) {
   const events = sliceEvents(props);
@@ -13,7 +13,7 @@ function ClassroomsTables(props: any) {
   return (
     <Wrap>
       {eventsByClassrooms.map(([classroom, data]) => {
-        const columns: ColumnDef<AllocationByClassrooms>[] = [
+        const columns: ColumnDef<EventByClassrooms>[] = [
           {
             accessorKey: 'subjectCode',
             header: classroom,
@@ -58,6 +58,6 @@ function ClassroomsTables(props: any) {
 
 export default createPlugin({
   views: {
-    allocationByClassrooms: ClassroomsTables,
+    eventsByClassrooms: ClassroomsTables,
   },
 });

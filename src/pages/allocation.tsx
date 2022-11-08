@@ -2,24 +2,24 @@ import { Grid, GridItem, Text } from '@chakra-ui/react';
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import allocationByClassroomsPlugin from 'components/allocations/allocationByClassroomsPlugin';
-import EventContent from 'components/allocations/eventContent';
+import eventsByClassroomsPlugin from 'components/allocation/eventsByClassroomsPlugin';
+import EventContent from 'components/allocation/eventContent';
 import Navbar from 'components/common/navbar.component';
 import { useEffect, useState } from 'react';
-import AllocationService from 'services/allocations.service';
-import { AllocationEventsMapper, AllocationResourcesFromEventsMapper } from 'utils/mappers/allocations.mapper';
+import AllocationService from 'services/events.service';
+import { AllocationEventsMapper, AllocationResourcesFromEventsMapper } from 'utils/mappers/allocation.mapper';
 
-function Allocations() {
+function Allocation() {
   const [allocation, setAllocation] = useState<any[]>([]);
   const [resources, setResources] = useState<{ id: string }[]>([]);
 
-  const allocationsService = new AllocationService();
+  const allocationService = new AllocationService();
   const buildings = 'Biênio';
 
   useEffect(() => {
-    Promise.all([allocationsService.getById('id-teste')]).then((values) => {
-      setAllocation(AllocationEventsMapper(values[0]));
-      setResources(AllocationResourcesFromEventsMapper(values[0]));
+    Promise.all([allocationService.list()]).then((values) => {
+      setAllocation(AllocationEventsMapper(values[0].data));
+      setResources(AllocationResourcesFromEventsMapper(values[0].data));
     });
     // eslint-disable-next-line
   }, []);
@@ -39,8 +39,8 @@ function Allocations() {
         <GridItem px='2' pb='2' area={'main'}>
           <FullCalendar
             schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
-            plugins={[timeGridPlugin, resourceTimelinePlugin, allocationByClassroomsPlugin]}
-            initialView='allocationByClassrooms'
+            plugins={[timeGridPlugin, resourceTimelinePlugin, eventsByClassroomsPlugin]}
+            initialView='eventsByClassrooms'
             views={{
               timeGridWeek: {
                 slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
@@ -61,7 +61,7 @@ function Allocations() {
                 titleFormat: { year: 'numeric', month: 'long' },
                 eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
               },
-              allocationByClassrooms: {
+              eventsByClassrooms: {
                 duration: { weeks: 1 },
                 titleFormat: () => buildings,
                 headerToolbar: false,
@@ -73,11 +73,11 @@ function Allocations() {
             firstDay={1}
             allDaySlot={false}
             headerToolbar={{
-              left: 'allocationByClassrooms timeGridWeek resourceTimelineDay resourceTimelineWeek',
+              left: 'eventsByClassrooms timeGridWeek resourceTimelineDay resourceTimelineWeek',
               center: 'title',
             }}
             buttonText={{
-              allocationByClassrooms: 'Salas',
+              eventsByClassrooms: 'Salas',
               timeGridWeek: 'Geral',
               resourceTimelineDay: 'Sala / Dia',
               resourceTimelineWeek: 'Sala / Semana',
@@ -97,4 +97,4 @@ function Allocations() {
   );
 }
 
-export default Allocations;
+export default Allocation;

@@ -49,8 +49,8 @@ function Classes() {
       header: 'Professores',
       cell: ({ row }) => (
         <Box>
-          {row.original.professors?.map((professor) => (
-            <Text key={professor}>{professor}</Text>
+          {row.original.professors?.map((professor, index) => (
+            <Text key={professor + index}>{professor}</Text>
           ))}
         </Box>
       ),
@@ -62,7 +62,7 @@ function Classes() {
       header: 'Horários',
       cell: (info) => (
         <Box>
-          {(info.getValue() as string[]).map((it) => (
+          {(info.getValue() as string[])?.map((it) => (
             <Text key={it}>{it}</Text>
           ))}
         </Box>

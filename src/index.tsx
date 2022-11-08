@@ -1,5 +1,5 @@
 import { ChakraProvider } from '@chakra-ui/react';
-import Allocations from 'pages/allocations';
+import Allocation from 'pages/allocation';
 import Classes from 'pages/classes';
 import Classrooms from 'pages/classrooms';
 import React from 'react';
@@ -26,7 +26,7 @@ root.render(
           <Route path='/' element={<AuthRoute />}>
             <Route path='classrooms' element={<Classrooms />} />
             <Route path='classes' element={<Classes />} />
-            <Route path='allocations' element={<Allocations />} />
+            <Route path='allocation' element={<Allocation />} />
           </Route>
         </Routes>
       </Router>
