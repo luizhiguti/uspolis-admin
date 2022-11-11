@@ -6,7 +6,7 @@ import { WeekDays } from 'models/enums/weekDays.enum';
 export function AllocationEventsMapper(allocation: Event[]) {
   return allocation.map((it) => ({
     title: it.subject_code,
-    daysOfWeek: [weekDayInt(it.week_day)],
+    daysOfWeek: [WeekDayInt(it.week_day)],
     startTime: it.start_time,
     endTime: it.end_time,
     startRecur: it.start_period,
@@ -14,16 +14,17 @@ export function AllocationEventsMapper(allocation: Event[]) {
     resourceId: it.classroom,
     extendedProps: {
       building: it.building,
-      classCode: classCodeText(it.class_code),
+      classCode: it.class_code,
       professor: it.professor,
       startTime: it.start_time,
       endTime: it.end_time,
       weekday: it.week_day,
+      classCodeText: ClassCodeText(it.class_code),
     },
   }));
 }
 
-function weekDayInt(weekDay: string) {
+function WeekDayInt(weekDay: string) {
   switch (weekDay) {
     default:
     case WeekDays.Sunday:
@@ -43,7 +44,7 @@ function weekDayInt(weekDay: string) {
   }
 }
 
-function classCodeText(classCode: string) {
+function ClassCodeText(classCode: string) {
   const classCodeInt = parseInt(classCode.slice(-2));
   return `Turma ${classCodeInt}`;
 }
@@ -59,30 +60,36 @@ export function AllocationResourcesFromEventsMapper(allocation: Event[]) {
   return Array.from(new Set(allocation.map((it) => ({ id: it.classroom, building: it.building }))));
 }
 
+function EventsRenderRangeEventsByClassroomsMapper(events: EventRenderRange[]): EventByClassrooms[] {
+  return events.map(({ def: { title, extendedProps, resourceIds } }) => ({
+    subjectCode: title,
+    classroom: resourceIds?.at(0) as string,
+    building: extendedProps?.building,
+    classCode: extendedProps?.classCode,
+    professor: extendedProps?.professor,
+    startTime: extendedProps?.startTime,
+    endTime: extendedProps?.endTime,
+    weekday: extendedProps?.weekday,
+    classCodeText: extendedProps?.classCodeText,
+  }));
+}
+
 export function EventsByClassroomMapper(events: EventRenderRange[]) {
-  const mapData = events
-    .map(({ def: { title, extendedProps, resourceIds } }) => ({
-      subjectCode: title,
-      classroom: resourceIds?.at(0) as string,
-      building: extendedProps?.building,
-      classCode: extendedProps?.classCode,
-      professor: extendedProps?.professor,
-      startTime: extendedProps?.startTime,
-      endTime: extendedProps?.endTime,
-      weekday: extendedProps?.weekday,
-    }))
-    .reduce((group: Map<string, EventByClassrooms[]>, event) => {
+  const mapData = EventsRenderRangeEventsByClassroomsMapper(events).reduce(
+    (group: Map<string, EventByClassrooms[]>, event) => {
       const { classroom } = event;
       const classroomClasses = group.get(classroom);
       classroomClasses ? group.set(classroom, classroomClasses.concat(event)) : group.set(classroom, [event]);
 
       return group;
-    }, new Map());
+    },
+    new Map(),
+  );
 
   // order events by day/time
   mapData.forEach((value) =>
     value.sort((a, b) => {
-      const firstMinusSecond = weekDayInt(a.weekday) - weekDayInt(b.weekday);
+      const firstMinusSecond = WeekDayInt(a.weekday) - WeekDayInt(b.weekday);
       if (firstMinusSecond > 0) {
         return 1;
       } else if (firstMinusSecond === 0) {
@@ -96,4 +103,10 @@ export function EventsByClassroomMapper(events: EventRenderRange[]) {
   );
 
   return orderedByEventsCount;
+}
+
+export function ClassEventsMapper(events: EventRenderRange[], classCode: string, subjectCode: string) {
+  return EventsRenderRangeEventsByClassroomsMapper(events).filter(
+    (it) => it.classCode === classCode && it.subjectCode === subjectCode,
+  );
 }

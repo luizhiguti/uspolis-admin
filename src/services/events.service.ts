@@ -8,7 +8,16 @@ export default class EventsService extends HttpService {
   constructor() {
     super(`${USPOLIS_SERVER_URL}/events`);
   }
+
   list(): Promise<AxiosResponse<Array<Event>>> {
     return this.http.get('');
+  }
+
+  allocate(): Promise<AxiosResponse<any>> {
+    return this.http.patch('allocate');
+  }
+
+  edit(subjectCode: string, classCode: string, weekDays: string[], classroom: string): Promise<AxiosResponse<number>> {
+    return this.http.patch(`edit/${subjectCode}/${classCode}`, weekDays, { params: { classroom } });
   }
 }

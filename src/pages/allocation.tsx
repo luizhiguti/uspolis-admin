@@ -51,6 +51,7 @@ function Allocation() {
                 slotDuration: '01:00',
                 slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
                 eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
+                titleFormat: { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' },
               },
               resourceTimelineWeek: {
                 slotDuration: '01:00',
@@ -64,7 +65,6 @@ function Allocation() {
               eventsByClassrooms: {
                 duration: { weeks: 1 },
                 titleFormat: () => buildings,
-                headerToolbar: false,
               },
             }}
             locale='pt-br'

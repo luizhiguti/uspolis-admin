@@ -17,7 +17,7 @@ export default interface Class {
 
 export interface Preferences {
   building: string;
-  min_capacity?: number;
+  required: boolean;
   air_conditioning?: boolean;
   projector?: boolean;
   accessibility?: boolean;

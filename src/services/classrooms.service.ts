@@ -24,4 +24,7 @@ export default class ClassroomsService extends HttpService {
   update(name: string, data: any): Promise<AxiosResponse<any>> {
     return this.http.put(name, data);
   }
+  getAvailable(week_day: string, start_time: string, end_time: string): Promise<AxiosResponse<string[]>> {
+    return this.http.get('available', { params: { week_day, start_time, end_time } });
+  }
 }

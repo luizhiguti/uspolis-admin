@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Center,
   Flex,
   Icon,
@@ -21,7 +22,9 @@ import Navbar from 'components/common/navbar.component';
 import Class from 'models/class.model';
 import { useEffect, useState } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import ClassesService from 'services/classes.service';
+import EventsService from 'services/events.service';
 import { Capitalize } from 'utils/formatters';
 import { FilterArray } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
@@ -30,6 +33,8 @@ function Classes() {
   const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
   const { isOpen: isOpenPreferences, onOpen: onOpenPreferences, onClose: onClosePreferences } = useDisclosure();
   const [selectedClass, setSelectedClass] = useState<Class>();
+
+  const navigate = useNavigate();
 
   const columns: ColumnDef<Class>[] = [
     {
@@ -85,6 +90,7 @@ function Classes() {
   ];
 
   const classesService = new ClassesService();
+  const eventsService = new EventsService();
 
   useEffect(() => {
     classesService.list().then((it) => {
@@ -112,6 +118,13 @@ function Classes() {
     onOpenPreferences();
   }
 
+  function handleAllocClick() {
+    eventsService.allocate().then((it) => {
+      console.log(it.statusText);
+      navigate('/allocation');
+    });
+  }
+
   return (
     <>
       <Navbar />
@@ -123,6 +136,9 @@ function Classes() {
             </Text>
             <Spacer />
             <JupiterCrawlerPopover />
+            <Button ml={2} colorScheme='blue' onClick={handleAllocClick}>
+              Alocar
+            </Button>
           </Flex>
           <Dialog
             isOpen={isOpenDelete}

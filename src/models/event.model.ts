@@ -20,4 +20,5 @@ export interface EventByClassrooms {
   startTime: string;
   endTime: string;
   weekday: string;
+  classCodeText: string;
 }

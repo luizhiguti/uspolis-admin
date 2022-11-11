@@ -10,10 +10,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  ModalOverlay,
-  NumberInput,
-  NumberInputField,
-  Select,
+  ModalOverlay, Select
 } from '@chakra-ui/react';
 // import { CreatableSelect, GroupBase, OptionBase, PropsValue } from 'chakra-react-select';
 import { Preferences } from 'models/class.model';
@@ -42,6 +39,7 @@ export default function PreferencesModal(props: PreferencesModalProps) {
 
   const initialForm: Preferences = {
     building: Buildings.BIENIO,
+    required: true,
   };
 
   const [form, setForm] = useState(props.formData ?? initialForm);
@@ -97,7 +95,7 @@ export default function PreferencesModal(props: PreferencesModalProps) {
             </Select>
           </FormControl>
 
-          <FormControl mt={4}>
+          {/* <FormControl mt={4}>
             <FormLabel>Capacidade mínima</FormLabel>
             <NumberInput
               placeholder='Capacidade'
@@ -107,7 +105,7 @@ export default function PreferencesModal(props: PreferencesModalProps) {
             >
               <NumberInputField />
             </NumberInput>
-          </FormControl>
+          </FormControl> */}
 
           <FormControl mt={4}>
             <HStack>
@@ -130,6 +128,15 @@ export default function PreferencesModal(props: PreferencesModalProps) {
                 Projetor
               </Checkbox>
             </HStack>
+          </FormControl>
+
+          <FormControl mt={4}>
+            <Checkbox
+              isChecked={form.required}
+              onChange={(event) => setForm((prev) => ({ ...prev, required: event.target.checked }))}
+            >
+              Turma deve ser alocada obrigatoriamente
+            </Checkbox>
           </FormControl>
         </ModalBody>
 

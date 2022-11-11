@@ -94,8 +94,9 @@ function Classrooms() {
     classroomService.list().then((it) => {
       setClassroomsList(it.data);
     });
+    console.log('useeffect');
     // eslint-disable-next-line
-  }, [isOpen]);
+  }, []);
 
   function handleDeleteClick(name: string) {
     classroomService.delete(name).then((it) => console.log(it.data));
@@ -115,6 +116,7 @@ function Classrooms() {
   return (
     <>
       <Navbar />
+      <RegisterModal isOpen={isOpen} onClose={onClose} formData={registerFormData} isUpdate={update} />
       <Center>
         <Box p={4} w='7xl' overflowX='auto'>
           <Flex align='center'>
@@ -125,7 +127,6 @@ function Classrooms() {
             <Button colorScheme='blue' onClick={handleCreateClick}>
               Cadastrar
             </Button>
-            <RegisterModal isOpen={isOpen} onClose={onClose} formData={registerFormData} isUpdate={update} />
           </Flex>
           <DataTable data={classroomsList} columns={columns} />
         </Box>

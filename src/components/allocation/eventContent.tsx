@@ -10,7 +10,7 @@ export default function EventContent(eventInfo: EventContentArg) {
       <Stack spacing={0}>
         {isTimeGridView && <Text noOfLines={1}>{eventInfo.timeText}</Text>}
         <Heading size='sm' noOfLines={1}>
-          {eventInfo.event.title} - {eventData.extendedProps?.classCode}
+          {eventInfo.event.title} - {eventData.extendedProps?.classCodeText}
         </Heading>
         {isTimeGridView && (
           <>
@@ -32,7 +32,7 @@ function ToolTipLabel(eventInfo: EventContentArg) {
     <Stack spacing={0}>
       <Text noOfLines={1}>{eventInfo.timeText}</Text>
       <Heading size='sm' noOfLines={1}>
-        {eventInfo.event.title} - {eventData.extendedProps?.classCode}
+        {eventInfo.event.title} - {eventData.extendedProps?.classCodeText}
       </Heading>
       <Text noOfLines={1}>{eventData.extendedProps?.professor}</Text>
       <Text noOfLines={1}>
