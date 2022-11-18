@@ -18,9 +18,11 @@ import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import PreferencesModal from 'components/classes/preferences.modal';
 import DataTable from 'components/common/dataTable.component';
 import Dialog from 'components/common/dialog.component';
+import Loading from 'components/common/loading.component';
 import Navbar from 'components/common/navbar.component';
-import Class from 'models/class.model';
-import { useEffect, useState } from 'react';
+import { appContext } from 'context/AppContext';
+import Class, { Preferences } from 'models/class.model';
+import { useContext, useEffect, useState } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import ClassesService from 'services/classes.service';
@@ -33,6 +35,8 @@ function Classes() {
   const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
   const { isOpen: isOpenPreferences, onOpen: onOpenPreferences, onClose: onClosePreferences } = useDisclosure();
   const [selectedClass, setSelectedClass] = useState<Class>();
+  const { setLoading } = useContext(appContext);
+  const [allocating, setAllocating] = useState(false);
 
   const navigate = useNavigate();
 
@@ -93,11 +97,17 @@ function Classes() {
   const eventsService = new EventsService();
 
   useEffect(() => {
-    classesService.list().then((it) => {
-      setClassesList(it.data);
-    });
+    fetchData();
     // eslint-disable-next-line
   }, []);
+
+  function fetchData() {
+    setLoading(true);
+    classesService.list().then((it) => {
+      setClassesList(it.data);
+      setLoading(false);
+    });
+  }
 
   function handleDeleteClick(obj: Class) {
     setSelectedClass(obj);
@@ -109,6 +119,7 @@ function Classes() {
       classesService.delete(selectedClass.subject_code, selectedClass.class_code).then((it) => {
         console.log(it.data);
         onCloseDelete();
+        fetchData();
       });
     }
   }
@@ -118,9 +129,20 @@ function Classes() {
     onOpenPreferences();
   }
 
+  function handleSave(data: Preferences) {
+    if (selectedClass) {
+      classesService.patchPreferences(selectedClass.subject_code, selectedClass.class_code, data).then((it) => {
+        console.log(it);
+        fetchData();
+      });
+    }
+  }
+
   function handleAllocClick() {
+    setAllocating(true);
     eventsService.allocate().then((it) => {
       console.log(it.statusText);
+      setAllocating(false);
       navigate('/allocation');
     });
   }
@@ -129,6 +151,7 @@ function Classes() {
     <>
       <Navbar />
       <Center>
+        <Loading isOpen={allocating} onClose={() => setAllocating(false)} />
         <Box p={4} w='8xl' overflow='auto'>
           <Flex align='center'>
             <Text fontSize='4xl' mb={4}>
@@ -149,9 +172,8 @@ function Classes() {
           <PreferencesModal
             isOpen={isOpenPreferences}
             onClose={onClosePreferences}
-            subjectCode={selectedClass?.subject_code ?? ''}
-            classCode={selectedClass?.class_code ?? ''}
             formData={selectedClass?.preferences}
+            onSave={handleSave}
           />
           <DataTable data={classesList} columns={columns} />
         </Box>

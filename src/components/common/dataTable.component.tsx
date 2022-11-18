@@ -1,5 +1,18 @@
 import { CheckIcon, CloseIcon, TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
-import { Box, chakra, Input, Select, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  chakra,
+  Input,
+  Progress,
+  Select,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
 import {
   Column,
   ColumnDef,
@@ -12,7 +25,8 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { useState, useEffect, useMemo } from 'react';
+import { appContext } from 'context/AppContext';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { Textify } from 'utils/formatters';
 
 export type DataTableProps<Data extends object> = {
@@ -23,6 +37,8 @@ export type DataTableProps<Data extends object> = {
 export default function DataTable<Data extends object>({ data, columns }: DataTableProps<Data>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+  const { loading } = useContext(appContext);
 
   const table = useReactTable({
     columns,
@@ -50,6 +66,7 @@ export default function DataTable<Data extends object>({ data, columns }: DataTa
 
   return (
     <TableContainer border='1px' borderRadius='lg' borderColor='blueviolet'>
+      {loading && <Progress size='xs' isIndeterminate />}
       <Table>
         <Thead>
           {table.getHeaderGroups().map((headerGroup) => (

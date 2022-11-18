@@ -16,18 +16,22 @@ import {
 import { ColumnDef } from '@tanstack/react-table';
 import RegisterModal from 'components/classrooms/register.modal';
 import DataTable from 'components/common/dataTable.component';
+import Dialog from 'components/common/dialog.component';
 import Navbar from 'components/common/navbar.component';
+import { appContext } from 'context/AppContext';
 import Classroom from 'models/classroom.model';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
 import ClassroomsService from 'services/classrooms.service';
 import { FilterBoolean, FilterNumber } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 function Classrooms() {
   const [classroomsList, setClassroomsList] = useState<Array<Classroom>>([]);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [registerFormData, setRegisterFormData] = useState();
-  const [update, setUpdate] = useState(false);
+  const { isOpen: isOpenRegister, onOpen: onOpenRegister, onClose: onCloseRegister } = useDisclosure();
+  const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
+  const [selectedClassroom, setSelectedClassroom] = useState<Classroom>();
+  const [isUpdate, setIsUpdate] = useState(false);
+  const { setLoading } = useContext(appContext);
 
   const columns: ColumnDef<Classroom>[] = [
     {
@@ -81,7 +85,7 @@ function Classrooms() {
           <MenuButton as={IconButton} aria-label='Options' icon={<Icon as={FaEllipsisV} />} variant='ghost' />
           <MenuList>
             <MenuItem onClick={() => handleEditClick(row.original)}>Editar</MenuItem>
-            <MenuItem onClick={() => handleDeleteClick(row.original.classroom_name)}>Deletar</MenuItem>
+            <MenuItem onClick={() => handleDeleteClick(row.original)}>Deletar</MenuItem>
           </MenuList>
         </Menu>
       ),
@@ -91,32 +95,70 @@ function Classrooms() {
   const classroomService = new ClassroomsService();
 
   useEffect(() => {
-    classroomService.list().then((it) => {
-      setClassroomsList(it.data);
-    });
-    console.log('useeffect');
+    fetchData();
     // eslint-disable-next-line
   }, []);
 
-  function handleDeleteClick(name: string) {
-    classroomService.delete(name).then((it) => console.log(it.data));
+  function fetchData() {
+    setLoading(true);
+    classroomService.list().then((it) => {
+      setClassroomsList(it.data);
+      setLoading(false);
+    });
   }
 
-  function handleEditClick(data: any) {
-    setRegisterFormData(data);
-    setUpdate(true);
-    onOpen();
+  function handleDeleteClick(data: Classroom) {
+    setSelectedClassroom(data);
+    onOpenDelete();
+  }
+
+  function handleEditClick(data: Classroom) {
+    setSelectedClassroom(data);
+    setIsUpdate(true);
+    onOpenRegister();
   }
 
   function handleCreateClick() {
-    setUpdate(false);
-    onOpen();
+    setIsUpdate(false);
+    onOpenRegister();
+  }
+
+  function handleDelete() {
+    if (selectedClassroom) {
+      classroomService.delete(selectedClassroom.classroom_name).then((it) => {
+        console.log(it.data);
+        onCloseDelete();
+        fetchData();
+      });
+    }
+  }
+
+  function handleSave(formData: Classroom) {
+    const request = isUpdate
+      ? classroomService.update(formData.classroom_name, formData)
+      : classroomService.create(formData);
+    Promise.resolve(request).then((it) => {
+      console.log(it.data);
+      fetchData();
+    });
   }
 
   return (
     <>
       <Navbar />
-      <RegisterModal isOpen={isOpen} onClose={onClose} formData={registerFormData} isUpdate={update} />
+      <RegisterModal
+        isOpen={isOpenRegister}
+        onClose={onCloseRegister}
+        formData={selectedClassroom}
+        isUpdate={isUpdate}
+        onSave={handleSave}
+      />
+      <Dialog
+        isOpen={isOpenDelete}
+        onClose={onCloseDelete}
+        onConfirm={handleDelete}
+        title={`Deseja deletar ${selectedClassroom?.classroom_name}`}
+      />
       <Center>
         <Box p={4} w='7xl' overflowX='auto'>
           <Flex align='center'>

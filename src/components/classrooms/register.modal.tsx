@@ -16,31 +16,27 @@ import {
   NumberInputField,
   Select,
 } from '@chakra-ui/react';
+import { appContext } from 'context/AppContext';
+import Classroom from 'models/classroom.model';
 
-// import { CreatableSelect, GroupBase } from 'chakra-react-select';
 import { Buildings } from 'models/enums/buildings.enum';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import ClassroomsService from 'services/classrooms.service';
 
 interface RegisterModalProps {
   isOpen: boolean;
   onClose: () => void;
-  formData?: any;
+  formData?: Classroom;
   isUpdate: boolean;
+  onSave: (data: Classroom) => void;
 }
-
-// interface LabelValueOptions {
-//   label: string;
-//   value: string;
-// }
 
 export default function RegisterModal(props: RegisterModalProps) {
   const classroomService = new ClassroomsService();
-  // const buildingsOptions = Object.values(Buildings).map((it) => ({ label: it, value: it }));
   const buildingsOptions = Object.values(Buildings);
 
-  const initialForm = {
+  const initialForm: Classroom = {
     classroom_name: '',
     building: Buildings.BIENIO,
     floor: 0,
@@ -51,6 +47,7 @@ export default function RegisterModal(props: RegisterModalProps) {
   };
 
   const [form, setForm] = useState(initialForm);
+  const { setLoading } = useContext(appContext);
 
   useEffect(() => {
     if (props.formData) setForm(props.formData);
@@ -58,15 +55,9 @@ export default function RegisterModal(props: RegisterModalProps) {
 
   function handleSaveClick() {
     if (isEmpty(form.classroom_name)) return;
-    if (props.isUpdate) {
-      classroomService.update(form.classroom_name, form).then((it) => {
-        props.onClose();
-      });
-    } else {
-      classroomService.create(form).then((it) => {
-        props.onClose();
-      });
-    }
+
+    props.onSave(form);
+    props.onClose();
   }
 
   function handleCloseModal() {
@@ -96,16 +87,6 @@ export default function RegisterModal(props: RegisterModalProps) {
 
           <FormControl mt={4} isInvalid={isEmpty(form.building)} isDisabled={props.isUpdate}>
             <FormLabel>Prédio</FormLabel>
-            {/* <CreatableSelect<LabelValueOptions, false, GroupBase<LabelValueOptions>>
-              id='buildings-select'
-              options={buildingsOptions}
-              closeMenuOnSelect
-              isDisabled={props.isUpdate}
-              placeholder='Prédio'
-              defaultValue={{ label: form.building, value: form.building }}
-              onChange={(option) => setForm((prev) => ({ ...prev, building: option?.value as Buildings }))}
-              formatCreateLabel={(value) => `Novo prédio "${value}"`}
-            /> */}
             <Select
               value={form.building}
               onChange={(event) => setForm((prev) => ({ ...prev, building: event.target.value as Buildings }))}
