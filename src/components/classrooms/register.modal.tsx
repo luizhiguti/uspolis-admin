@@ -16,13 +16,11 @@ import {
   NumberInputField,
   Select,
 } from '@chakra-ui/react';
-import { appContext } from 'context/AppContext';
 import Classroom from 'models/classroom.model';
 
 import { Buildings } from 'models/enums/buildings.enum';
 
-import { useEffect, useState, useContext } from 'react';
-import ClassroomsService from 'services/classrooms.service';
+import { useEffect, useState } from 'react';
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -33,7 +31,6 @@ interface RegisterModalProps {
 }
 
 export default function RegisterModal(props: RegisterModalProps) {
-  const classroomService = new ClassroomsService();
   const buildingsOptions = Object.values(Buildings);
 
   const initialForm: Classroom = {
@@ -47,7 +44,6 @@ export default function RegisterModal(props: RegisterModalProps) {
   };
 
   const [form, setForm] = useState(initialForm);
-  const { setLoading } = useContext(appContext);
 
   useEffect(() => {
     if (props.formData) setForm(props.formData);
@@ -148,9 +144,9 @@ export default function RegisterModal(props: RegisterModalProps) {
 
         <ModalFooter>
           <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
-            Save
+            Salvar
           </Button>
-          <Button onClick={props.onClose}>Cancel</Button>
+          <Button onClick={props.onClose}>Cancelar</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

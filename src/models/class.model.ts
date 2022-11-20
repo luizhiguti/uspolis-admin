@@ -22,3 +22,11 @@ export interface Preferences {
   projector?: boolean;
   accessibility?: boolean;
 }
+
+export interface EditClassEvents {
+  week_day_id: string;
+  professor: string;
+  week_day: string;
+  start_time: string;
+  end_time: string;
+}

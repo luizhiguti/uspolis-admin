@@ -14,6 +14,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
+import EditModal from 'components/classes/edit.modal';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import PreferencesModal from 'components/classes/preferences.modal';
 import DataTable from 'components/common/dataTable.component';
@@ -21,7 +22,7 @@ import Dialog from 'components/common/dialog.component';
 import Loading from 'components/common/loading.component';
 import Navbar from 'components/common/navbar.component';
 import { appContext } from 'context/AppContext';
-import Class, { Preferences } from 'models/class.model';
+import Class, { EditClassEvents, Preferences } from 'models/class.model';
 import { useContext, useEffect, useState } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -34,6 +35,7 @@ function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
   const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
   const { isOpen: isOpenPreferences, onOpen: onOpenPreferences, onClose: onClosePreferences } = useDisclosure();
+  const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure();
   const [selectedClass, setSelectedClass] = useState<Class>();
   const { setLoading } = useContext(appContext);
   const [allocating, setAllocating] = useState(false);
@@ -85,6 +87,7 @@ function Classes() {
         <Menu>
           <MenuButton as={IconButton} aria-label='Options' icon={<Icon as={FaEllipsisV} />} variant='ghost' />
           <MenuList>
+            <MenuItem onClick={() => handleEditClick(row.original)}>Editar</MenuItem>
             <MenuItem onClick={() => handlePreferencesClick(row.original)}>Preferências</MenuItem>
             <MenuItem onClick={() => handleDeleteClick(row.original)}>Deletar</MenuItem>
           </MenuList>
@@ -129,7 +132,7 @@ function Classes() {
     onOpenPreferences();
   }
 
-  function handleSave(data: Preferences) {
+  function handleSavePreferences(data: Preferences) {
     if (selectedClass) {
       classesService.patchPreferences(selectedClass.subject_code, selectedClass.class_code, data).then((it) => {
         console.log(it);
@@ -147,11 +150,32 @@ function Classes() {
     });
   }
 
+  function handleEditClick(obj: Class) {
+    setSelectedClass(obj);
+    onOpenEdit();
+  }
+
+  function handleEdit(data: EditClassEvents[]) {
+    if (selectedClass) {
+      classesService.edit(selectedClass.subject_code, selectedClass.class_code, data).then((it) => {
+        console.log(it.data);
+        fetchData();
+      });
+    }
+  }
+
   return (
     <>
       <Navbar />
+      <Loading isOpen={allocating} onClose={() => setAllocating(false)} />
+      <PreferencesModal
+        isOpen={isOpenPreferences}
+        onClose={onClosePreferences}
+        formData={selectedClass?.preferences}
+        onSave={handleSavePreferences}
+      />
+      <EditModal isOpen={isOpenEdit} onClose={onCloseEdit} formData={selectedClass} onSave={handleEdit} />
       <Center>
-        <Loading isOpen={allocating} onClose={() => setAllocating(false)} />
         <Box p={4} w='8xl' overflow='auto'>
           <Flex align='center'>
             <Text fontSize='4xl' mb={4}>
@@ -168,12 +192,6 @@ function Classes() {
             onClose={onCloseDelete}
             onConfirm={handleDelete}
             title={`Deseja deletar ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
-          />
-          <PreferencesModal
-            isOpen={isOpenPreferences}
-            onClose={onClosePreferences}
-            formData={selectedClass?.preferences}
-            onSave={handleSave}
           />
           <DataTable data={classesList} columns={columns} />
         </Box>

@@ -126,7 +126,7 @@ export default function EditEventModal({ isOpen, onClose, classEvents }: EditEve
 
         <ModalFooter>
           <Button colorScheme='blue' mr={2} onClick={handleSaveClick} isDisabled={!newClassroom}>
-            Alterar
+            Salvar
           </Button>
           <Button onClick={onClose}>Cancelar</Button>
         </ModalFooter>

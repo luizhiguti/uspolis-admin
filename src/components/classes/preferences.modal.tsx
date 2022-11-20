@@ -112,9 +112,9 @@ export default function PreferencesModal(props: PreferencesModalProps) {
 
         <ModalFooter>
           <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
-            Save
+            Salvar
           </Button>
-          <Button onClick={props.onClose}>Cancel</Button>
+          <Button onClick={props.onClose}>Cancelar</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
