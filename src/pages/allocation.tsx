@@ -16,17 +16,14 @@ function Allocation() {
   const { loading, setLoading } = useContext(appContext);
 
   const allocationService = new AllocationService();
-  const buildings = 'Biênio';
 
   useEffect(() => {
     setLoading(true);
-    setTimeout(() => {
-      Promise.all([allocationService.list()]).then((values) => {
-        setAllocation(AllocationEventsMapper(values[0].data));
-        setResources(AllocationResourcesFromEventsMapper(values[0].data));
-        setLoading(false);
-      });
-    }, 1000);
+    Promise.all([allocationService.list()]).then((values) => {
+      setAllocation(AllocationEventsMapper(values[0].data));
+      setResources(AllocationResourcesFromEventsMapper(values[0].data));
+      setLoading(false);
+    });
     // eslint-disable-next-line
   }, []);
 
@@ -71,7 +68,6 @@ function Allocation() {
                 },
                 eventsByClassrooms: {
                   duration: { weeks: 1 },
-                  titleFormat: () => buildings,
                 },
               }}
               locale='pt-br'

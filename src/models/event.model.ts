@@ -6,8 +6,8 @@ export default interface Event {
   week_day: string;
   start_time: string;
   end_time: string;
-  classroom: string;
-  building: string;
+  classroom?: string;
+  building?: string;
   professor?: string;
 }
 

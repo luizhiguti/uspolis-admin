@@ -12,12 +12,12 @@ export default interface Class {
   vacancies: number;
   subscribers: number;
   pendings: number;
-  preferences?: Preferences;
+  preferences: Preferences;
+  has_to_be_allocated: boolean;
 }
 
 export interface Preferences {
   building: string;
-  required: boolean;
   air_conditioning?: boolean;
   projector?: boolean;
   accessibility?: boolean;

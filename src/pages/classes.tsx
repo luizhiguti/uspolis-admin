@@ -171,7 +171,7 @@ function Classes() {
       <PreferencesModal
         isOpen={isOpenPreferences}
         onClose={onClosePreferences}
-        formData={selectedClass?.preferences}
+        data={selectedClass}
         onSave={handleSavePreferences}
       />
       <EditModal isOpen={isOpenEdit} onClose={onCloseEdit} formData={selectedClass} onSave={handleEdit} />

@@ -47,8 +47,8 @@ function ClassroomsTables(props: any) {
                     <Text>{data.classCodeText}</Text>
                     <Tooltip label={data.professor}>
                       <Text>
-                        {data.professor.slice(0, 25)}
-                        {data.professor.length > 25 && '...'}
+                        {data.professor?.slice(0, 25)}
+                        {data.professor?.length > 25 && '...'}
                       </Text>
                     </Tooltip>
                   </Box>

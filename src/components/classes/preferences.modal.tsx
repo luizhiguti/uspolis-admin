@@ -13,32 +13,36 @@ import {
   ModalOverlay,
   Select,
 } from '@chakra-ui/react';
-import { Preferences } from 'models/class.model';
+import Class, { Preferences } from 'models/class.model';
 import { Buildings } from 'models/enums/buildings.enum';
 
 import { useEffect, useState } from 'react';
 
+interface PreferencesForm extends Preferences {
+  has_to_be_allocated: boolean;
+}
+
 interface PreferencesModalProps {
   isOpen: boolean;
   onClose: () => void;
-  formData?: Preferences; // data from database
-  onSave: (data: Preferences) => void;
+  data?: Class; // data from database
+  onSave: (data: PreferencesForm) => void;
 }
 
 export default function PreferencesModal(props: PreferencesModalProps) {
   const buildingsOptions = Object.values(Buildings);
 
-  const initialForm: Preferences = {
+  const initialForm: PreferencesForm = {
     building: Buildings.BIENIO,
-    required: true,
+    has_to_be_allocated: true,
   };
 
-  const [form, setForm] = useState(props.formData ?? initialForm);
+  const [form, setForm] = useState(initialForm);
 
   useEffect(() => {
     // set data from database
-    if (props.formData) setForm(props.formData);
-  }, [props.formData]);
+    if (props.data) setForm({ ...props.data.preferences, has_to_be_allocated: props.data.has_to_be_allocated });
+  }, [props.data]);
 
   function handleSaveClick() {
     if (isEmpty(form.building)) return;
@@ -102,8 +106,8 @@ export default function PreferencesModal(props: PreferencesModalProps) {
 
           <FormControl mt={4}>
             <Checkbox
-              isChecked={form.required}
-              onChange={(event) => setForm((prev) => ({ ...prev, required: event.target.checked }))}
+              isChecked={form.has_to_be_allocated}
+              onChange={(event) => setForm((prev) => ({ ...prev, has_to_be_allocated: event.target.checked }))}
             >
               Turma deve ser alocada obrigatoriamente
             </Checkbox>
