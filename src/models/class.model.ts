@@ -30,3 +30,10 @@ export interface EditClassEvents {
   start_time: string;
   end_time: string;
 }
+
+export interface HasToBeAllocatedClass {
+  subject_code: string;
+  class_code: string;
+  has_to_be_allocated: boolean;
+  professors?: string[];
+}

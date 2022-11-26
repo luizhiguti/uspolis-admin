@@ -17,7 +17,6 @@ import {
   ModalHeader,
   ModalOverlay,
   Select,
-  Spacer,
   Text,
 } from '@chakra-ui/react';
 import Class, { EditClassEvents } from 'models/class.model';

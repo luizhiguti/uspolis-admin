@@ -8,3 +8,8 @@ export default interface Classroom {
   accessibility: boolean;
   updated_at?: string;
 }
+
+export interface AvailableClassroom {
+  classroom_name: string;
+  capacity: number;
+}

@@ -14,6 +14,8 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
+import { AxiosError } from 'axios';
+import HasToBeAllocatedDrawer from 'components/allocation/hasToBeAllocated.drawer';
 import EditModal from 'components/classes/edit.modal';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import PreferencesModal from 'components/classes/preferences.modal';
@@ -22,7 +24,8 @@ import Dialog from 'components/common/dialog.component';
 import Loading from 'components/common/loading.component';
 import Navbar from 'components/common/navbar.component';
 import { appContext } from 'context/AppContext';
-import Class, { EditClassEvents, Preferences } from 'models/class.model';
+import Class, { EditClassEvents, HasToBeAllocatedClass, Preferences } from 'models/class.model';
+import { ErrorResponse } from 'models/interfaces/serverResponses';
 import { useContext, useEffect, useState } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -36,6 +39,7 @@ function Classes() {
   const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
   const { isOpen: isOpenPreferences, onOpen: onOpenPreferences, onClose: onClosePreferences } = useDisclosure();
   const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure();
+  const { isOpen: isOpenDrawer, onOpen: onOpenDrawer, onClose: onCloseDrawer } = useDisclosure();
   const [selectedClass, setSelectedClass] = useState<Class>();
   const { setLoading } = useContext(appContext);
   const [allocating, setAllocating] = useState(false);
@@ -141,13 +145,19 @@ function Classes() {
     }
   }
 
-  function handleAllocClick() {
+  function handleAlloc() {
     setAllocating(true);
-    eventsService.allocate().then((it) => {
-      console.log(it.statusText);
-      setAllocating(false);
-      navigate('/allocation');
-    });
+    eventsService
+      .allocate()
+      .then((it) => {
+        console.log(it.statusText);
+        navigate('/allocation');
+      })
+      .catch(({ response }: AxiosError<ErrorResponse>) => {
+        onOpenDrawer();
+        console.log(response?.data.error);
+      })
+      .finally(() => setAllocating(false));
   }
 
   function handleEditClick(obj: Class) {
@@ -164,6 +174,11 @@ function Classes() {
     }
   }
 
+  function handleDrawerAlloc(data: HasToBeAllocatedClass[]) {
+    setAllocating(true);
+    classesService.editHasToBeAllocated(data).then(() => handleAlloc());
+  }
+
   return (
     <>
       <Navbar />
@@ -175,6 +190,12 @@ function Classes() {
         onSave={handleSavePreferences}
       />
       <EditModal isOpen={isOpenEdit} onClose={onCloseEdit} formData={selectedClass} onSave={handleEdit} />
+      <HasToBeAllocatedDrawer
+        isOpen={isOpenDrawer}
+        onClose={onCloseDrawer}
+        classesList={classesList}
+        onSave={handleDrawerAlloc}
+      />
       <Center>
         <Box p={4} w='8xl' overflow='auto'>
           <Flex align='center'>
@@ -183,7 +204,7 @@ function Classes() {
             </Text>
             <Spacer />
             <JupiterCrawlerPopover />
-            <Button ml={2} colorScheme='blue' onClick={handleAllocClick}>
+            <Button ml={2} colorScheme='blue' onClick={handleAlloc}>
               Alocar
             </Button>
           </Flex>

@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import Class, { EditClassEvents, Preferences } from 'models/class.model';
+import Class, { EditClassEvents, HasToBeAllocatedClass, Preferences } from 'models/class.model';
 import HttpService from './http.service';
 
 const USPOLIS_SERVER_URL = 'http://localhost:5000/api'; // TODO: environment variable
@@ -27,5 +27,9 @@ export default class ClassesService extends HttpService {
 
   edit(subjectCode: string, classCode: string, data: EditClassEvents[]) {
     return this.http.patch(`${subjectCode}/${classCode}`, data);
+  }
+
+  editHasToBeAllocated(data: HasToBeAllocatedClass[]) {
+    return this.http.patch('has-to-be-allocated', data);
   }
 }

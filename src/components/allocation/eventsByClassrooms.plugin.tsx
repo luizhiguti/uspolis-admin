@@ -22,7 +22,7 @@ function ClassroomsTables(props: any) {
   }
 
   return (
-    <Wrap>
+    <Wrap pb={4}>
       <EditEventModal isOpen={isOpen} onClose={onClose} classEvents={selectedClass} />
       {eventsByClassrooms.map(([classroom, data]) => {
         const columns: ColumnDef<EventByClassrooms>[] = [

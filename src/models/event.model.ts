@@ -9,6 +9,7 @@ export default interface Event {
   classroom?: string;
   building?: string;
   professor?: string;
+  subscribers: number;
 }
 
 export interface EventByClassrooms {
@@ -21,4 +22,5 @@ export interface EventByClassrooms {
   endTime: string;
   weekday: string;
   classCodeText: string;
+  subscribers: number;
 }

@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react';
 import { Auth } from 'aws-amplify';
 import { appContext } from 'context/AppContext';
-import { ReactNode, useContext } from 'react';
+import { ReactNode, useContext, useEffect } from 'react';
 import { FaUser } from 'react-icons/fa';
 
 const Links = [
@@ -51,6 +51,8 @@ export default function Navbar() {
   function handleClickLogout() {
     Auth.signOut();
   }
+
+  useEffect(() => {}, [username]);
 
   return (
     <>

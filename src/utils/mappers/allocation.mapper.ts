@@ -21,6 +21,7 @@ export function AllocationEventsMapper(allocation: Event[]) {
       endTime: it.end_time,
       weekday: it.week_day,
       classCodeText: ClassCodeText(it.class_code),
+      subscribers: it.subscribers,
     },
   }));
 }
@@ -65,6 +66,7 @@ function EventsRenderRangeEventsByClassroomsMapper(events: EventRenderRange[]): 
     endTime: extendedProps?.endTime,
     weekday: extendedProps?.weekday,
     classCodeText: extendedProps?.classCodeText,
+    subscribers: extendedProps?.subscribers,
   }));
 }
 

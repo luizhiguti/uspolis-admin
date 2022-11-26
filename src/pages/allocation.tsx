@@ -2,7 +2,7 @@ import { Grid, GridItem, Skeleton, Text } from '@chakra-ui/react';
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import eventsByClassroomsPlugin from 'components/allocation/eventsByClassroomsPlugin';
+import eventsByClassroomsPlugin from 'components/allocation/eventsByClassrooms.plugin';
 import EventContent from 'components/allocation/eventContent';
 import Navbar from 'components/common/navbar.component';
 import { useEffect, useState, useContext } from 'react';

@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Button,
   Checkbox,
   FormControl,
@@ -15,6 +17,7 @@ import {
   Text,
   useCheckboxGroup,
 } from '@chakra-ui/react';
+import { AvailableClassroom } from 'models/classroom.model';
 import { EventByClassrooms } from 'models/event.model';
 import { useEffect, useState } from 'react';
 import ClassroomsService from 'services/classrooms.service';
@@ -30,9 +33,10 @@ interface EditEventModalProps {
 export default function EditEventModal({ isOpen, onClose, classEvents }: EditEventModalProps) {
   const [weekDays, setWeekDays] = useState<string[]>([]);
   const { value, setValue, getCheckboxProps } = useCheckboxGroup();
-  const [availableClassrooms, setAvailableClassrooms] = useState<string[]>([]);
-  const [availableClassroomsByEvent, setAvailableClassroomsByEvent] = useState<Map<string, string[]>>();
+  const [availableClassrooms, setAvailableClassrooms] = useState<AvailableClassroom[]>([]);
+  const [availableClassroomsByEvent, setAvailableClassroomsByEvent] = useState<Map<string, AvailableClassroom[]>>();
   const [newClassroom, setNewClassroom] = useState('');
+  const [selectedClassroomCapacity, setSelectedClassroomCapacity] = useState(0);
 
   const classroomsService = new ClassroomsService();
   const eventsService = new EventsService();
@@ -43,8 +47,8 @@ export default function EditEventModal({ isOpen, onClose, classEvents }: EditEve
     const _weekDays = classEvents.map((it) => it.weekday);
     setValue(_weekDays);
     setWeekDays(_weekDays);
-    const availableByEvent = new Map<string, string[]>();
-    const available: string[][] = [];
+    const availableByEvent = new Map<string, AvailableClassroom[]>();
+    const available: AvailableClassroom[][] = [];
     const promises = classEvents.map((cl) => classroomsService.getAvailable(cl.weekday, cl.startTime, cl.endTime));
 
     Promise.all(promises).then((values) => {
@@ -53,7 +57,7 @@ export default function EditEventModal({ isOpen, onClose, classEvents }: EditEve
         available.push(it.data);
       });
       setAvailableClassroomsByEvent(availableByEvent);
-      const intersection = available.length ? available.reduce((p, c) => p.filter((e) => c.includes(e))) : [];
+      const intersection = getIntersection(available);
       setAvailableClassrooms(intersection);
     });
 
@@ -61,16 +65,26 @@ export default function EditEventModal({ isOpen, onClose, classEvents }: EditEve
   }, [classEvents]);
 
   useEffect(() => {
-    const available: string[][] = [];
+    const available: AvailableClassroom[][] = [];
     availableClassroomsByEvent?.forEach((classrooms, weekDay) => {
       if (value.includes(weekDay)) available.push(classrooms);
     });
 
-    const intersection = available.length ? available.reduce((p, c) => p.filter((e) => c.includes(e))) : [];
+    const intersection = getIntersection(available);
     setAvailableClassrooms(intersection);
     setNewClassroom('');
     // eslint-disable-next-line
   }, [value]);
+
+  useEffect(() => {
+    setSelectedClassroomCapacity(availableClassrooms?.find((it) => it.classroom_name === newClassroom)?.capacity ?? 0);
+  }, [newClassroom]);
+
+  function getIntersection(available: AvailableClassroom[][]) {
+    return available.length
+      ? available.reduce((p, c) => p.filter((e) => c.map((it) => it.classroom_name).includes(e.classroom_name)))
+      : [];
+  }
 
   function handleSaveClick() {
     eventsService.edit(classData.subjectCode, classData.classCode, value as string[], newClassroom).then((it) => {
@@ -86,8 +100,22 @@ export default function EditEventModal({ isOpen, onClose, classEvents }: EditEve
         <ModalHeader>
           Editar alocação - {classData?.subjectCode}
           <Text fontSize='md' fontWeight='normal'>
-            {classData?.classCode} - {classData?.professor}
+            {classData?.classCodeText} - {classData?.professor}
           </Text>
+          <Alert
+            status={
+              !selectedClassroomCapacity
+                ? 'info'
+                : classData?.subscribers > selectedClassroomCapacity
+                ? 'error'
+                : 'success'
+            }
+            fontSize='md'
+            mt={2}
+          >
+            <AlertIcon />
+            Inscritos: {classData?.subscribers}
+          </Alert>
         </ModalHeader>
         <ModalCloseButton />
 
@@ -111,13 +139,16 @@ export default function EditEventModal({ isOpen, onClose, classEvents }: EditEve
           <FormControl my={4}>
             <FormLabel>Salas disponíveis</FormLabel>
             <Select
-              placeholder='Selecione'
+              placeholder='Sala - Capacidade'
+              isInvalid={classData?.subscribers > selectedClassroomCapacity}
               value={newClassroom}
-              onChange={(event) => setNewClassroom(event.target.value)}
+              onChange={(event) => {
+                setNewClassroom(event.target.value);
+              }}
             >
               {availableClassrooms.map((it) => (
-                <option key={it} value={it}>
-                  {it}
+                <option key={it.classroom_name} value={it.classroom_name}>
+                  {it.classroom_name} - {it.capacity}
                 </option>
               ))}
             </Select>
