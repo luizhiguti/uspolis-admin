@@ -78,6 +78,7 @@ export default function EditEventModal({ isOpen, onClose, classEvents }: EditEve
 
   useEffect(() => {
     setSelectedClassroomCapacity(availableClassrooms?.find((it) => it.classroom_name === newClassroom)?.capacity ?? 0);
+    // eslint-disable-next-line
   }, [newClassroom]);
 
   function getIntersection(available: AvailableClassroom[][]) {
