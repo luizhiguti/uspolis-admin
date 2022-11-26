@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import Classroom from 'models/classroom.model';
+import Classroom, { AvailableClassroom } from 'models/classroom.model';
 import HttpService from './http.service';
 
 const USPOLIS_SERVER_URL = 'http://localhost:5000/api'; // TODO: environment variable
@@ -23,5 +23,8 @@ export default class ClassroomsService extends HttpService {
 
   update(name: string, data: any): Promise<AxiosResponse<any>> {
     return this.http.put(name, data);
+  }
+  getAvailable(week_day: string, start_time: string, end_time: string): Promise<AxiosResponse<AvailableClassroom[]>> {
+    return this.http.get('available', { params: { week_day, start_time, end_time } });
   }
 }

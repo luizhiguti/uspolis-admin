@@ -11,7 +11,6 @@ import {
   Link,
   Menu,
   MenuButton,
-  MenuDivider,
   MenuItem,
   MenuList,
   Stack,
@@ -20,12 +19,14 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { Auth } from 'aws-amplify';
-import { ReactNode, useEffect, useState } from 'react';
+import { appContext } from 'context/AppContext';
+import { ReactNode, useContext, useEffect } from 'react';
 import { FaUser } from 'react-icons/fa';
 
 const Links = [
   { text: 'Salas', value: 'classrooms' },
   { text: 'Turmas', value: 'classes' },
+  { text: 'Alocações', value: 'allocation' },
 ];
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
@@ -45,15 +46,13 @@ const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
 
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [username, setUsername] = useState('');
+  const { username } = useContext(appContext);
 
   function handleClickLogout() {
     Auth.signOut();
   }
 
-  useEffect(() => {
-    Auth.currentUserInfo().then((it) => setUsername(it?.username));
-  }, []);
+  useEffect(() => {}, [username]);
 
   return (
     <>
@@ -87,8 +86,8 @@ export default function Navbar() {
                 </Flex>
               </MenuButton>
               <MenuList>
-                <MenuItem>Perfil</MenuItem>
-                <MenuDivider />
+                {/* <MenuItem>Perfil</MenuItem>
+                <MenuDivider /> */}
                 <MenuItem onClick={handleClickLogout}>Sair</MenuItem>
               </MenuList>
             </Menu>

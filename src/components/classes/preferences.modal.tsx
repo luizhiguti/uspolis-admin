@@ -11,52 +11,44 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  NumberInput,
-  NumberInputField,
   Select,
 } from '@chakra-ui/react';
-// import { CreatableSelect, GroupBase, OptionBase, PropsValue } from 'chakra-react-select';
-import { Preferences } from 'models/class.model';
+import Class, { Preferences } from 'models/class.model';
 import { Buildings } from 'models/enums/buildings.enum';
 
 import { useEffect, useState } from 'react';
-import ClassesService from 'services/classes.service';
+
+interface PreferencesForm extends Preferences {
+  has_to_be_allocated: boolean;
+}
 
 interface PreferencesModalProps {
   isOpen: boolean;
   onClose: () => void;
-  formData?: Preferences; // data from database
-  subjectCode: string;
-  classCode: string;
+  data?: Class; // data from database
+  onSave: (data: PreferencesForm) => void;
 }
 
-// interface LabelValueOptions extends OptionBase {
-//   label: string;
-//   value: string;
-// }
-
 export default function PreferencesModal(props: PreferencesModalProps) {
-  // const buildingsOptions = Object.values(Buildings).map((it) => ({ label: it, value: it }));
   const buildingsOptions = Object.values(Buildings);
-  const classesService = new ClassesService();
 
-  const initialForm: Preferences = {
+  const initialForm: PreferencesForm = {
     building: Buildings.BIENIO,
+    has_to_be_allocated: true,
   };
 
-  const [form, setForm] = useState(props.formData ?? initialForm);
+  const [form, setForm] = useState(initialForm);
 
   useEffect(() => {
     // set data from database
-    if (props.formData) setForm(props.formData);
-  }, [props.formData]);
+    if (props.data) setForm({ ...props.data.preferences, has_to_be_allocated: props.data.has_to_be_allocated });
+  }, [props.data]);
 
   function handleSaveClick() {
     if (isEmpty(form.building)) return;
-    classesService.patchPreferences(props.subjectCode, props.classCode, form).then((it) => {
-      console.log(it);
-      props.onClose();
-    });
+
+    props.onSave(form);
+    props.onClose();
   }
 
   function handleCloseModal() {
@@ -76,15 +68,7 @@ export default function PreferencesModal(props: PreferencesModalProps) {
         <ModalBody pb={6}>
           <FormControl isInvalid={isEmpty(form.building)}>
             <FormLabel>Prédio</FormLabel>
-            {/* <CreatableSelect<LabelValueOptions, false, GroupBase<LabelValueOptions>>
-              id='buildings-select'
-              options={buildingsOptions}
-              closeMenuOnSelect
-              placeholder={form.building}
-              // defaultValue={{ label: form.building, value: form.building }}
-              onChange={(option) => setForm((prev) => ({ ...prev, building: option?.value as Buildings }))}
-              formatCreateLabel={(value) => `Novo prédio "${value}"`}
-            /> */}
+
             <Select
               value={form.building}
               onChange={(event) => setForm((prev) => ({ ...prev, building: event.target.value as Buildings }))}
@@ -95,18 +79,6 @@ export default function PreferencesModal(props: PreferencesModalProps) {
                 </option>
               ))}
             </Select>
-          </FormControl>
-
-          <FormControl mt={4}>
-            <FormLabel>Capacidade mínima</FormLabel>
-            <NumberInput
-              placeholder='Capacidade'
-              value={form.min_capacity}
-              onChange={(_, value) => setForm((prev) => ({ ...prev, capacity: isNaN(value) ? 0 : value }))}
-              min={0}
-            >
-              <NumberInputField />
-            </NumberInput>
           </FormControl>
 
           <FormControl mt={4}>
@@ -131,13 +103,22 @@ export default function PreferencesModal(props: PreferencesModalProps) {
               </Checkbox>
             </HStack>
           </FormControl>
+
+          <FormControl mt={4}>
+            <Checkbox
+              isChecked={form.has_to_be_allocated}
+              onChange={(event) => setForm((prev) => ({ ...prev, has_to_be_allocated: event.target.checked }))}
+            >
+              Turma deve ser alocada obrigatoriamente
+            </Checkbox>
+          </FormControl>
         </ModalBody>
 
         <ModalFooter>
           <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
-            Save
+            Salvar
           </Button>
-          <Button onClick={props.onClose}>Cancel</Button>
+          <Button onClick={props.onClose}>Cancelar</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

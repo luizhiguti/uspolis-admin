@@ -12,13 +12,28 @@ export default interface Class {
   vacancies: number;
   subscribers: number;
   pendings: number;
-  preferences?: Preferences;
+  preferences: Preferences;
+  has_to_be_allocated: boolean;
 }
 
 export interface Preferences {
   building: string;
-  min_capacity?: number;
   air_conditioning?: boolean;
   projector?: boolean;
   accessibility?: boolean;
+}
+
+export interface EditClassEvents {
+  week_day_id: string;
+  professor: string;
+  week_day: string;
+  start_time: string;
+  end_time: string;
+}
+
+export interface HasToBeAllocatedClass {
+  subject_code: string;
+  class_code: string;
+  has_to_be_allocated: boolean;
+  professors?: string[];
 }

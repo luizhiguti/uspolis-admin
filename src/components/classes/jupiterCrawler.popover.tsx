@@ -18,7 +18,7 @@ import {
   UnorderedList,
   useDisclosure,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import ClassesService from 'services/classes.service';
 
 interface JupiterCrawlerPopoverPrpos {
@@ -29,6 +29,7 @@ export default function JupiterCrawlerPopover({ subjects = [] }: JupiterCrawlerP
   const [subjectsList, setSubjectsList] = useState(subjects);
   const [subjectInput, setSubjectInput] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const initialFocusRef = useRef(null);
 
   const classesService = new ClassesService();
 
@@ -51,7 +52,7 @@ export default function JupiterCrawlerPopover({ subjects = [] }: JupiterCrawlerP
   }
 
   return (
-    <Popover isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
+    <Popover isOpen={isOpen} onOpen={onOpen} onClose={onClose} initialFocusRef={initialFocusRef}>
       <PopoverTrigger>
         <Button colorScheme='blue'>Adicionar disciplinas</Button>
       </PopoverTrigger>
@@ -64,6 +65,10 @@ export default function JupiterCrawlerPopover({ subjects = [] }: JupiterCrawlerP
               value={subjectInput}
               onChange={(event) => setSubjectInput(event.target.value)}
               placeholder='Código da disciplina'
+              ref={initialFocusRef}
+              onKeyDownCapture={(e) => {
+                if (e.key === 'Enter') handleAddClick();
+              }}
             />
             <InputRightElement>
               <IconButton
