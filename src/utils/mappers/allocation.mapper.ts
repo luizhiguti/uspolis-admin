@@ -1,8 +1,7 @@
 import { EventRenderRange } from '@fullcalendar/react';
+import { Classrooms } from 'models/enums/clasrooms.enum';
 import { WeekDays } from 'models/enums/weekDays.enum';
 import Event, { EventByClassrooms } from 'models/event.model';
-
-const UNALLOCATED = 'NÃO ALOCADAS';
 
 export function AllocationEventsMapper(allocation: Event[]) {
   return allocation.map((it) => ({
@@ -12,7 +11,7 @@ export function AllocationEventsMapper(allocation: Event[]) {
     endTime: it.end_time,
     startRecur: it.start_period,
     endRecur: it.end_period,
-    resourceId: it.classroom || UNALLOCATED,
+    resourceId: it.classroom || Classrooms.UNALLOCATED,
     extendedProps: {
       building: it.building,
       classCode: it.class_code,
@@ -52,7 +51,9 @@ function ClassCodeText(classCode: string) {
 }
 
 export function AllocationResourcesFromEventsMapper(allocation: Event[]) {
-  return Array.from(new Set(allocation.map((it) => ({ id: it.classroom || UNALLOCATED, building: it.building }))));
+  return Array.from(
+    new Set(allocation.map((it) => ({ id: it.classroom || Classrooms.UNALLOCATED, building: it.building }))),
+  );
 }
 
 function EventsRenderRangeEventsByClassroomsMapper(events: EventRenderRange[]): EventByClassrooms[] {
