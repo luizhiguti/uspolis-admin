@@ -17,7 +17,13 @@ export default class EventsService extends HttpService {
     return this.http.patch('allocate');
   }
 
-  edit(subjectCode: string, classCode: string, weekDays: string[], classroom: string): Promise<AxiosResponse<number>> {
-    return this.http.patch(`edit/${subjectCode}/${classCode}`, weekDays, { params: { classroom } });
+  edit(
+    subjectCode: string,
+    classCode: string,
+    weekDays: string[],
+    classroom: string,
+    building: string,
+  ): Promise<AxiosResponse<number>> {
+    return this.http.patch(`edit/${subjectCode}/${classCode}`, weekDays, { params: { classroom, building } });
   }
 }

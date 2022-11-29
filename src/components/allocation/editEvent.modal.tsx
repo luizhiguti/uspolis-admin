@@ -36,7 +36,11 @@ export default function EditEventModal({ isOpen, onClose, classEvents }: EditEve
   const [availableClassrooms, setAvailableClassrooms] = useState<AvailableClassroom[]>([]);
   const [availableClassroomsByEvent, setAvailableClassroomsByEvent] = useState<Map<string, AvailableClassroom[]>>();
   const [newClassroom, setNewClassroom] = useState('');
-  const [selectedClassroomCapacity, setSelectedClassroomCapacity] = useState(0);
+  const [selectedClassroom, setSelectedClassroom] = useState<AvailableClassroom>({
+    classroom_name: '',
+    building: '',
+    capacity: 0,
+  });
 
   const classroomsService = new ClassroomsService();
   const eventsService = new EventsService();
@@ -77,7 +81,10 @@ export default function EditEventModal({ isOpen, onClose, classEvents }: EditEve
   }, [value]);
 
   useEffect(() => {
-    setSelectedClassroomCapacity(availableClassrooms?.find((it) => it.classroom_name === newClassroom)?.capacity ?? 0);
+    const classroom = availableClassrooms?.find((it) => it.classroom_name === newClassroom);
+    if (classroom) {
+      setSelectedClassroom(classroom);
+    }
     // eslint-disable-next-line
   }, [newClassroom]);
 
@@ -88,10 +95,15 @@ export default function EditEventModal({ isOpen, onClose, classEvents }: EditEve
   }
 
   function handleSaveClick() {
-    eventsService.edit(classData.subjectCode, classData.classCode, value as string[], newClassroom).then((it) => {
-      console.log(it.data);
-      onClose();
-    });
+    eventsService
+      .edit(classData.subjectCode, classData.classCode, value as string[], newClassroom, selectedClassroom.building)
+      .then((it) => {
+        console.log(it.data);
+        onClose();
+        // refetch data
+        // TODO: create AllocationContext
+        window.location.reload();
+      });
   }
 
   return (
@@ -105,9 +117,9 @@ export default function EditEventModal({ isOpen, onClose, classEvents }: EditEve
           </Text>
           <Alert
             status={
-              !selectedClassroomCapacity
+              !selectedClassroom.classroom_name
                 ? 'info'
-                : classData?.subscribers > selectedClassroomCapacity
+                : classData?.subscribers > selectedClassroom.capacity
                 ? 'error'
                 : 'success'
             }
@@ -141,7 +153,7 @@ export default function EditEventModal({ isOpen, onClose, classEvents }: EditEve
             <FormLabel>Salas disponíveis</FormLabel>
             <Select
               placeholder='Sala - Capacidade'
-              isInvalid={classData?.subscribers > selectedClassroomCapacity}
+              isInvalid={classData?.subscribers > selectedClassroom.capacity}
               value={newClassroom}
               onChange={(event) => {
                 setNewClassroom(event.target.value);
