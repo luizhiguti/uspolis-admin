@@ -65,7 +65,7 @@ export default function DataTable<Data extends object>({ data, columns }: DataTa
   }, [table.getState().columnFilters[0]?.id]);
 
   return (
-    <TableContainer border='1px' borderRadius='lg' borderColor='blueviolet'>
+    <TableContainer border='1px' borderRadius='lg' borderColor='uspolis.blue'>
       {loading && <Progress size='xs' isIndeterminate />}
       <Table>
         <Thead>
@@ -75,7 +75,7 @@ export default function DataTable<Data extends object>({ data, columns }: DataTa
                 // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
                 const meta: any = header.column.columnDef.meta;
                 return (
-                  <Th key={header.id} colSpan={header.colSpan} isNumeric={meta?.isNumeric} pb='2'>
+                  <Th key={header.id} colSpan={header.colSpan} isNumeric={meta?.isNumeric} pb='2' color='uspolis.blue'>
                     <Box
                       onClick={header.column.getToggleSortingHandler()}
                       cursor={header.column.getCanSort() ? 'pointer' : ''}
@@ -160,6 +160,7 @@ function Filter({ column }: { column: Column<any, any> }) {
       placeholder='Filtrar...'
       size='sm'
       mt='2'
+      _placeholder={{ color: 'uspolis.blue' }}
     />
   );
 }
