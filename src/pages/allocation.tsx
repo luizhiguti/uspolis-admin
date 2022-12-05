@@ -40,7 +40,7 @@ function Allocation() {
           <Text fontSize='4xl'>Alocações</Text>
         </GridItem>
         <GridItem px='2' pb='2' area={'main'}>
-          <Skeleton isLoaded={!loading} h='100vh' startColor='blue.300'>
+          <Skeleton isLoaded={!loading} h='100vh' startColor='uspolis.blue'>
             <FullCalendar
               schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
               plugins={[timeGridPlugin, resourceTimelinePlugin, eventsByClassroomsPlugin]}
@@ -88,6 +88,7 @@ function Allocation() {
               }}
               events={allocation}
               eventContent={EventContent}
+              eventColor='#408080'
               displayEventTime
               resources={resources}
               resourceAreaWidth='12%'

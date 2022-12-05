@@ -8,6 +8,7 @@ import {
   HStack,
   Icon,
   IconButton,
+  Image,
   Link,
   Menu,
   MenuButton,
@@ -15,13 +16,13 @@ import {
   MenuList,
   Stack,
   Text,
-  useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
 import { Auth } from 'aws-amplify';
 import { appContext } from 'context/AppContext';
 import { ReactNode, useContext, useEffect } from 'react';
 import { FaUser } from 'react-icons/fa';
+import Logo from 'assets/uspolis.logo.png';
 
 const Links = [
   { text: 'Salas', value: 'classrooms' },
@@ -31,12 +32,14 @@ const Links = [
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
   <Link
+    display='flex'
+    alignItems='center'
     px={2}
     py={1}
-    rounded={'md'}
+    rounded='md'
     _hover={{
-      textDecoration: 'none',
-      bg: useColorModeValue('blue.300', 'blue.700'),
+      // textDecoration: 'none',
+      bg: 'uspolis.grey',
     }}
     href={to}
   >
@@ -56,7 +59,7 @@ export default function Navbar() {
 
   return (
     <>
-      <Box bg={useColorModeValue('blue.200', 'blue.800')} px={4}>
+      <Box bg='uspolis.blue' color='white' px={4}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <IconButton
             size={'md'}
@@ -66,9 +69,10 @@ export default function Navbar() {
             onClick={isOpen ? onClose : onOpen}
           />
           <HStack spacing={8} alignItems={'center'}>
-            <Box>
-              <NavLink to='/index'>USPolis</NavLink>
-            </Box>
+            <NavLink to='/index'>
+              <Image src={Logo} alt='USPolis' objectFit='contain' boxSize='40px' mr={2} />
+              USPolis
+            </NavLink>
             <HStack as={'nav'} spacing={4} display={{ base: 'none', md: 'flex' }}>
               {Links.map((link) => (
                 <NavLink key={link.value} to={link.value}>
@@ -88,7 +92,9 @@ export default function Navbar() {
               <MenuList>
                 {/* <MenuItem>Perfil</MenuItem>
                 <MenuDivider /> */}
-                <MenuItem onClick={handleClickLogout}>Sair</MenuItem>
+                <MenuItem onClick={handleClickLogout} color='black'>
+                  Sair
+                </MenuItem>
               </MenuList>
             </Menu>
           </Flex>

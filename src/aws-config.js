@@ -1,20 +1,20 @@
 const awsConfig = {
   Auth: {
-    // // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
+    // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
     // identityPoolId: 'XX-XXXX-X:XXXXXXXX-XXXX-1234-abcd-1234567890ab',
 
     // REQUIRED - Amazon Cognito Region
-    region: 'us-east-1',
+    region: process.env.REACT_APP_AWS_REGION,
 
     //   // OPTIONAL - Amazon Cognito Federated Identity Pool Region
     //   // Required only if it's different from Amazon Cognito Region
     //   identityPoolRegion: 'XX-XXXX-X',
 
     // OPTIONAL - Amazon Cognito User Pool ID
-    userPoolId: 'us-east-1_HAbRAYBqd',
+    userPoolId: process.env.REACT_APP_AWS_USER_POOL_ID,
 
     // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-    userPoolWebClientId: '4hasqmrk6ngu8bnsf7mia7ol00',
+    userPoolWebClientId: process.env.REACT_APP_AWS_USER_POOL_WEB_CLIENT_ID,
 
     //   // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
     //   mandatorySignIn: false,

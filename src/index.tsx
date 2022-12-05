@@ -12,13 +12,14 @@ import { Amplify } from 'aws-amplify';
 import awsConfig from 'aws-config';
 import AuthRoute from 'components/routes/auth.route';
 import AppContextProvider from 'context/AppContext';
+import theme from 'utils/chakra.theme';
 
 Amplify.configure(awsConfig);
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <React.StrictMode>
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <AppContextProvider>
         <Router>
           <Routes>

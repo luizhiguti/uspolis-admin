@@ -74,7 +74,7 @@ export default function JupiterCrawlerPopover({ subjects = [] }: JupiterCrawlerP
               <IconButton
                 aria-label='Add subbject'
                 size='sm'
-                colorScheme='cyan'
+                colorScheme='blue'
                 icon={<AddIcon />}
                 onClick={handleAddClick}
               />
@@ -93,7 +93,7 @@ export default function JupiterCrawlerPopover({ subjects = [] }: JupiterCrawlerP
                 Limpar
               </Button>
               <Spacer />
-              <Button colorScheme='blue' size='sm' variant='outline' onClick={handleConfirmClick}>
+              <Button colorScheme='blue' size='sm' onClick={handleConfirmClick}>
                 Confirmar
               </Button>
             </Flex>

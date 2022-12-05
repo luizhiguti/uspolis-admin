@@ -70,7 +70,7 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
           <Accordion allowMultiple defaultIndex={Array.from(Array(formData?.week_days?.length).keys())}>
             {formData?.week_days?.map((it, index) => (
               <AccordionItem key={index}>
-                <AccordionButton bg='blue.200' _hover={{ bg: 'blue.200' }}>
+                <AccordionButton bg='uspolis.blue' _hover={{ bg: 'uspolis.blue' }} color='white'>
                   <Box flex='1' textAlign='left'>
                     {Capitalize(it)} - {form[index]?.start_time} - {form[index]?.end_time}
                   </Box>

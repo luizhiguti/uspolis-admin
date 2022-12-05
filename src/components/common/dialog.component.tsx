@@ -30,7 +30,7 @@ export default function Dialog({ isOpen, onClose, onConfirm, title, text = '' }:
           <Button ref={cancelRef} onClick={onClose} colorScheme='red' variant='outline' size='sm'>
             Cancelar
           </Button>
-          <Button ml={2} onClick={onConfirm} colorScheme='blue' variant='outline' size='sm'>
+          <Button ml={2} onClick={onConfirm} colorScheme='blue' size='sm'>
             Confirmar
           </Button>
         </AlertDialogFooter>

@@ -37,7 +37,7 @@ function ClassroomsTables(props: any) {
           const data = row.original;
           return (
             <Flex as='button' textAlign='start' onClick={() => handleEventClick(row.original)}>
-              <Box bg='blue.200' paddingX={2} paddingY={1} marginRight={2}>
+              <Box bg='uspolis.blue' color='white' paddingX={2} paddingY={1} marginRight={2}>
                 <Text fontSize='xs'>{data.startTime}</Text>
                 <Heading size='sm'>{Capitalize(data.weekday)}</Heading>
                 <Text fontSize='xs'>{data.endTime}</Text>
