@@ -16,6 +16,8 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  NumberInput,
+  NumberInputField,
   Select,
   Text,
 } from '@chakra-ui/react';
@@ -41,10 +43,11 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
       setForm(
         formData.week_days.map((weekDay, index) => ({
           week_day_id: weekDay,
-          professor: formData.professors[index],
+          professor: formData.professors[index] ?? '',
           week_day: weekDay,
           start_time: formData.start_time[index],
           end_time: formData.end_time[index],
+          subscribers: formData.subscribers,
         })),
       );
     }
@@ -67,6 +70,20 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
+          <FormControl mb={4}>
+            <FormLabel>Quantidade de alunos</FormLabel>
+            <NumberInput
+              placeholder='Alunos'
+              value={form[0]?.subscribers}
+              onChange={(_, value) => {
+                console.log(value);
+                setForm((prev) => prev.map((it) => ({ ...it, subscribers: isNaN(value) ? 0 : value })));
+              }}
+              min={0}
+            >
+              <NumberInputField />
+            </NumberInput>
+          </FormControl>
           <Accordion allowMultiple defaultIndex={Array.from(Array(formData?.week_days?.length).keys())}>
             {formData?.week_days?.map((it, index) => (
               <AccordionItem key={index}>

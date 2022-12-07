@@ -29,6 +29,7 @@ export interface EditClassEvents {
   week_day: string;
   start_time: string;
   end_time: string;
+  subscribers: number;
 }
 
 export interface HasToBeAllocatedClass {

@@ -12,6 +12,7 @@ import {
   Spacer,
   Text,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { AxiosError } from 'axios';
@@ -32,7 +33,7 @@ import { useNavigate } from 'react-router-dom';
 import ClassesService from 'services/classes.service';
 import EventsService from 'services/events.service';
 import { Capitalize } from 'utils/formatters';
-import { FilterArray } from 'utils/tanstackTableHelpers/tableFiltersFns';
+import { FilterArray, FilterNumber } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
@@ -45,6 +46,7 @@ function Classes() {
   const [allocating, setAllocating] = useState(false);
 
   const navigate = useNavigate();
+  const toast = useToast();
 
   const columns: ColumnDef<Class>[] = [
     {
@@ -58,6 +60,11 @@ function Classes() {
     {
       accessorKey: 'class_code',
       header: 'Turma',
+    },
+    {
+      accessorKey: 'subscribers',
+      header: 'Nº Alunos',
+      filterFn: FilterNumber,
     },
     {
       accessorKey: 'professors',
@@ -179,6 +186,22 @@ function Classes() {
     classesService.editHasToBeAllocated(data).then(() => handleAlloc());
   }
 
+  function handleCrawlerSave(subjectsList: string[]) {
+    classesService
+      .createMany(subjectsList)
+      .then((it) => {
+        console.log(it);
+        fetchData();
+      })
+      .catch(({ response }: AxiosError<ErrorResponse>) =>
+        toast({
+          title: response?.data.message,
+          position: 'top-left',
+          status: 'error',
+        }),
+      );
+  }
+
   return (
     <>
       <Navbar />
@@ -203,7 +226,7 @@ function Classes() {
               Turmas
             </Text>
             <Spacer />
-            <JupiterCrawlerPopover />
+            <JupiterCrawlerPopover onSave={handleCrawlerSave} />
             <Button ml={2} colorScheme='blue' onClick={handleAlloc}>
               Alocar
             </Button>

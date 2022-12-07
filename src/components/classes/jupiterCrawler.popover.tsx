@@ -19,19 +19,17 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
-import ClassesService from 'services/classes.service';
 
 interface JupiterCrawlerPopoverPrpos {
   subjects?: string[];
+  onSave: (subjectsList: string[]) => void;
 }
 
-export default function JupiterCrawlerPopover({ subjects = [] }: JupiterCrawlerPopoverPrpos) {
+export default function JupiterCrawlerPopover({ subjects = [], onSave }: JupiterCrawlerPopoverPrpos) {
   const [subjectsList, setSubjectsList] = useState(subjects);
   const [subjectInput, setSubjectInput] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const initialFocusRef = useRef(null);
-
-  const classesService = new ClassesService();
 
   function handleAddClick() {
     if (subjectInput.length > 0 && !subjectsList.includes(subjectInput))
@@ -45,10 +43,8 @@ export default function JupiterCrawlerPopover({ subjects = [] }: JupiterCrawlerP
   }
 
   function handleConfirmClick() {
-    classesService.createMany(subjectsList).then((it) => {
-      console.log(it);
-      onClose();
-    });
+    onSave(subjectsList);
+    onClose();
   }
 
   return (
@@ -63,7 +59,7 @@ export default function JupiterCrawlerPopover({ subjects = [] }: JupiterCrawlerP
           <InputGroup>
             <Input
               value={subjectInput}
-              onChange={(event) => setSubjectInput(event.target.value)}
+              onChange={(event) => setSubjectInput(event.target.value.toUpperCase())}
               placeholder='Código da disciplina'
               ref={initialFocusRef}
               onKeyDownCapture={(e) => {

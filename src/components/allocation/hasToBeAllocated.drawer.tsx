@@ -74,9 +74,8 @@ export default function HasToBeAllocatedDrawer({ isOpen, onClose, classesList, o
             <FormLabel>Turmas alocadas obrigatoriamente</FormLabel>
             <Stack>
               {hasToBeAllocatedClasses?.map((cls, index) => (
-                <HStack spacing={4}>
+                <HStack key={index} spacing={4}>
                   <Checkbox
-                    key={index}
                     isChecked={cls.has_to_be_allocated}
                     onChange={(event) =>
                       setHasToBeAllocatedClasses(

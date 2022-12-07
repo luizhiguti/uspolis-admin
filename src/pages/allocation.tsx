@@ -76,7 +76,7 @@ function Allocation() {
               firstDay={1}
               allDaySlot={false}
               headerToolbar={{
-                left: 'eventsByClassrooms timeGridWeek resourceTimelineDay resourceTimelineWeek',
+                left: 'eventsByClassrooms resourceTimelineDay resourceTimelineWeek timeGridWeek',
                 center: 'title',
               }}
               buttonText={{
