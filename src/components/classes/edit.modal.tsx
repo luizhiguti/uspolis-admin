@@ -84,7 +84,7 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
               <NumberInputField />
             </NumberInput>
           </FormControl>
-          <Accordion allowMultiple defaultIndex={Array.from(Array(formData?.week_days?.length).keys())}>
+          <Accordion allowMultiple defaultIndex={[0]}>
             {formData?.week_days?.map((it, index) => (
               <AccordionItem key={index}>
                 <AccordionButton bg='uspolis.blue' _hover={{ bg: 'uspolis.blue' }} color='white'>

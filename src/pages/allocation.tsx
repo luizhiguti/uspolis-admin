@@ -1,19 +1,23 @@
 import { Grid, GridItem, Skeleton, Text } from '@chakra-ui/react';
+import { useDisclosure } from '@chakra-ui/react-use-disclosure';
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import eventsByClassroomsPlugin from 'components/allocation/eventsByClassrooms.plugin';
+import DatePickerModal from 'components/allocation/datePicker.modal';
 import EventContent from 'components/allocation/eventContent';
+import eventsByClassroomsPlugin from 'components/allocation/eventsByClassrooms.plugin';
 import Navbar from 'components/common/navbar.component';
-import { useEffect, useState, useContext } from 'react';
+import { appContext } from 'context/AppContext';
+import { useContext, useEffect, useRef, useState } from 'react';
 import AllocationService from 'services/events.service';
 import { AllocationEventsMapper, AllocationResourcesFromEventsMapper } from 'utils/mappers/allocation.mapper';
-import { appContext } from 'context/AppContext';
 
 function Allocation() {
   const [allocation, setAllocation] = useState<any[]>([]);
   const [resources, setResources] = useState<{ id: string }[]>([]);
   const { loading, setLoading } = useContext(appContext);
+  const calendarRef = useRef<FullCalendar>(null!);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const allocationService = new AllocationService();
 
@@ -26,6 +30,11 @@ function Allocation() {
     });
     // eslint-disable-next-line
   }, []);
+
+  function handleSelectDate(ISOdate: string) {
+    const calendarApi = calendarRef.current.getApi();
+    calendarApi.gotoDate(ISOdate);
+  }
 
   return (
     <>
@@ -41,7 +50,9 @@ function Allocation() {
         </GridItem>
         <GridItem px='2' pb='2' area={'main'}>
           <Skeleton isLoaded={!loading} h='100vh' startColor='uspolis.blue'>
+            <DatePickerModal isOpen={isOpen} onClose={onClose} onSelectDate={handleSelectDate} />
             <FullCalendar
+              ref={calendarRef}
               schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
               plugins={[timeGridPlugin, resourceTimelinePlugin, eventsByClassroomsPlugin]}
               initialView='eventsByClassrooms'
@@ -78,6 +89,7 @@ function Allocation() {
               headerToolbar={{
                 left: 'eventsByClassrooms resourceTimelineDay resourceTimelineWeek timeGridWeek',
                 center: 'title',
+                right: 'goToDate prev,next today',
               }}
               buttonText={{
                 eventsByClassrooms: 'Salas',
@@ -85,6 +97,12 @@ function Allocation() {
                 resourceTimelineDay: 'Sala / Dia',
                 resourceTimelineWeek: 'Sala / Semana',
                 today: 'Hoje',
+              }}
+              customButtons={{
+                goToDate: {
+                  text: 'Data',
+                  click: (_ev, _el) => onOpen(),
+                },
               }}
               events={allocation}
               eventContent={EventContent}

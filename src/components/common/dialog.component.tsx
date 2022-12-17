@@ -14,18 +14,18 @@ interface DialogProps {
   onClose: () => void;
   onConfirm: () => void;
   title: string;
-  text?: string;
+  warningText?: string;
 }
 
-export default function Dialog({ isOpen, onClose, onConfirm, title, text = '' }: DialogProps) {
+export default function Dialog({ isOpen, onClose, onConfirm, title, warningText = '' }: DialogProps) {
   const cancelRef = useRef(null);
   return (
     <AlertDialog leastDestructiveRef={cancelRef} onClose={onClose} isOpen={isOpen} isCentered>
       <AlertDialogOverlay />
 
       <AlertDialogContent>
-        <AlertDialogHeader>{title}</AlertDialogHeader>
-        <AlertDialogBody>{text}</AlertDialogBody>
+        <AlertDialogHeader>{title}?</AlertDialogHeader>
+        <AlertDialogBody color='red'>{warningText}</AlertDialogBody>
         <AlertDialogFooter>
           <Button ref={cancelRef} onClick={onClose} colorScheme='red' variant='outline' size='sm'>
             Cancelar

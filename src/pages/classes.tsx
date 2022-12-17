@@ -41,6 +41,7 @@ function Classes() {
   const { isOpen: isOpenPreferences, onOpen: onOpenPreferences, onClose: onClosePreferences } = useDisclosure();
   const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure();
   const { isOpen: isOpenDrawer, onOpen: onOpenDrawer, onClose: onCloseDrawer } = useDisclosure();
+  const { isOpen: isOpenAlloc, onOpen: onOpenAlloc, onClose: onCloseAlloc } = useDisclosure();
   const [selectedClass, setSelectedClass] = useState<Class>();
   const { setLoading } = useContext(appContext);
   const [allocating, setAllocating] = useState(false);
@@ -152,6 +153,10 @@ function Classes() {
     }
   }
 
+  function handleAllocClick() {
+    onOpenAlloc();
+  }
+
   function handleAlloc() {
     setAllocating(true);
     eventsService
@@ -161,6 +166,7 @@ function Classes() {
         navigate('/allocation');
       })
       .catch(({ response }: AxiosError<ErrorResponse>) => {
+        onCloseAlloc();
         onOpenDrawer();
         console.log(response?.data.error);
       })
@@ -219,6 +225,14 @@ function Classes() {
         classesList={classesList}
         onSave={handleDrawerAlloc}
       />
+      <Dialog
+        isOpen={isOpenAlloc}
+        onClose={onCloseAlloc}
+        onConfirm={handleAlloc}
+        title='Deseja calcular alocação para as turmas e salas cadastradas'
+        warningText='ATENÇÃO: AO CONFIRMAR QUALQUER ALOCAÇÃO SALVA SERÁ PERDIDA'
+      />
+
       <Center>
         <Box p={4} w='8xl' overflow='auto'>
           <Flex align='center'>
@@ -227,7 +241,7 @@ function Classes() {
             </Text>
             <Spacer />
             <JupiterCrawlerPopover onSave={handleCrawlerSave} />
-            <Button ml={2} colorScheme='blue' onClick={handleAlloc}>
+            <Button ml={2} colorScheme='blue' onClick={handleAllocClick}>
               Alocar
             </Button>
           </Flex>
