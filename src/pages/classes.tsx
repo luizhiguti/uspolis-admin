@@ -193,6 +193,7 @@ function Classes() {
   }
 
   function handleCrawlerSave(subjectsList: string[]) {
+    setLoading(true);
     classesService
       .createMany(subjectsList)
       .then((it) => {
@@ -205,7 +206,8 @@ function Classes() {
           position: 'top-left',
           status: 'error',
         }),
-      );
+      )
+      .finally(() => setLoading(false));
   }
 
   return (
